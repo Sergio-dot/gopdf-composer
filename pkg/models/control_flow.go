@@ -1,0 +1,25 @@
+package models
+
+type ControlFlow struct {
+	Document Document `json:"document"`
+}
+
+type Document struct {
+	Structure []Section `json:"structure"`
+}
+
+type Section struct {
+	Assets []AssetReference `json:"assets"`
+}
+
+type AssetReference struct {
+	AssetID    string     `json:"assetId"`
+	Version    string     `json:"version"`
+	Conditions *Condition `json:"conditions,omitempty"`
+}
+
+type Condition struct {
+	Field string `json:"field,omitempty"`
+	Op    string `json:"op,omitempty"`
+	Value any    `json:"value,omitempty"`
+}
