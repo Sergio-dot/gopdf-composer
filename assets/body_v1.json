@@ -1,0 +1,35 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Hello, this is a generated PDF for {{user}}.",
+        "fontSize": 12,
+        "marginBottom": 20
+      }
+    },
+    {
+      "type": "container",
+      "direction": "row",
+      "gap": 10,
+      "children": [
+        {
+          "type": "text",
+          "textProperties": {
+            "text": "Column 1 data: {{col1}}",
+            "fontSize": 10
+          },
+          "widthPercent": 50
+        },
+        {
+          "type": "text",
+          "textProperties": {
+            "text": "Column 2 data: {{col2}}",
+            "fontSize": 10
+          },
+          "widthPercent": 50
+        }
+      ]
+    }
+  ]
+}

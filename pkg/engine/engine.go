@@ -87,7 +87,7 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 		fontDir = filepath.Join(e.config.AssetDir, "fonts")
 	}
 
-	r := renderer.NewRenderer(runtimeCtx, fontDir)
+	r := renderer.NewRenderer(runtimeCtx, fontDir, e.config.DefaultFont)
 
 	// Process sections
 	for _, section := range cf.Document.Structure {

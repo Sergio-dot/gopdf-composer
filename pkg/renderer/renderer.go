@@ -11,8 +11,9 @@ import (
 )
 
 type Renderer struct {
-	pdf     *gofpdf.Fpdf
-	context *models.RuntimeContext
+	pdf         *gofpdf.Fpdf
+	context     *models.RuntimeContext
+	defaultFont string
 }
 
 type Margins struct {
@@ -22,18 +23,17 @@ type Margins struct {
 	Bottom float64
 }
 
-func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir string) *Renderer {
+func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir, defaultFont string) *Renderer {
 	pdf := gofpdf.New("P", "mm", "A4", fontDir)
 
-	// add fonts
-	pdf.AddUTF8Font("Montserrat", "", "montserrat_regular.ttf")
-	pdf.AddUTF8Font("Montserrat", "B", "montserrat_bold.ttf")
-	pdf.AddUTF8Font("Montserrat", "I", "montserrat_italic.ttf")
+	if defaultFont == "" {
+		defaultFont = "Arial"
+	}
 
-	pdf.SetFont("Montserrat", "", 12)
+	pdf.SetFont(defaultFont, "", 12)
 	pdf.AddPage()
 
-	return &Renderer{pdf: pdf, context: runtimeCtx}
+	return &Renderer{pdf: pdf, context: runtimeCtx, defaultFont: defaultFont}
 }
 
 func (r *Renderer) RenderBlock(block *models.Block) error {
@@ -66,7 +66,7 @@ func (r *Renderer) renderText(block *models.Block) error {
 	// font
 	fontFamily := props.FontFamily
 	if fontFamily == "" {
-		fontFamily = "Montserrat"
+		fontFamily = r.defaultFont
 	}
 
 	fontWeight := ""
@@ -231,7 +231,7 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	} else {
 		r.textColor("")
 		r.backgroundColor("")
-		r.pdf.SetFont("Montserrat", "B", 10)
+		r.pdf.SetFont(r.defaultFont, "B", 10)
 	}
 
 	align := "C"
@@ -258,7 +258,7 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	} else {
 		r.textColor("")
 		r.backgroundColor("")
-		r.pdf.SetFont("Montserrat", "", 9)
+		r.pdf.SetFont(r.defaultFont, "", 9)
 	}
 
 	if props.RowStyle.CellHeight > 0 {
@@ -278,7 +278,7 @@ func (r *Renderer) renderTable(block *models.Block) error {
 
 func (r *Renderer) applyTableCellStyle(style *models.CellStyle) {
 	if style.FontSize > 0 {
-		fontFamily := "Montserrat"
+		fontFamily := r.defaultFont
 
 		fontStyle := ""
 		switch style.FontWeight {

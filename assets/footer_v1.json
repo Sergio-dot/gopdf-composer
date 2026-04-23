@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Page Footer - Confidential",
+        "fontSize": 8,
+        "align": "right",
+        "marginTop": 20
+      }
+    }
+  ]
+}

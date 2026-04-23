@@ -1,0 +1,32 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "This is an extra section only visible if show_extra is true.",
+        "fontSize": 14,
+        "fontColor": "#FF0000",
+        "marginTop": 15,
+        "marginBottom": 10
+      }
+    },
+    {
+      "type": "table",
+      "tableProperties": {
+        "headers": ["Key", "Value"],
+        "rows": [
+          ["Status", "Active"],
+          ["Priority", "High"]
+        ],
+        "headerStyle": {
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "backgroundColor": "#CCCCCC"
+        },
+        "rowStyle": {
+          "fontSize": 10
+        }
+      }
+    }
+  ]
+}

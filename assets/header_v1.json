@@ -1,0 +1,14 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Header for {{user}}",
+        "fontSize": 18,
+        "fontWeight": "bold",
+        "align": "center",
+        "marginBottom": 10
+      }
+    }
+  ]
+}
