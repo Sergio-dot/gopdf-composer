@@ -13,6 +13,7 @@ type Block struct {
 	ImageProperties     *ImageProperties     `json:"imageProperties,omitempty"`
 	TableProperties     *TableProperties     `json:"tableProperties,omitempty"`
 	PageBreakProperties *PageBreakProperties `json:"pageBreakProperties,omitempty"`
+	LoopProperties      *LoopProperties      `json:"loopProperties,omitempty"`
 
 	// Container specific
 	Direction string  `json:"direction,omitempty"` // row or column
@@ -27,6 +28,11 @@ type Block struct {
 }
 
 type PageBreakProperties struct{}
+
+type LoopProperties struct {
+	DataSource string `json:"dataSource"`
+	ItemVar    string `json:"itemVar,omitempty"`
+}
 
 type TextProperties struct {
 	Text            string  `json:"text"`

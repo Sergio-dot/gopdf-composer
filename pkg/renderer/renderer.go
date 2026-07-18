@@ -48,6 +48,8 @@ func (r *Renderer) RenderBlock(block *models.Block) error {
 		return r.renderContainer(block)
 	case "pagebreak":
 		return r.renderPageBreak(block)
+	case "loop":
+		return r.renderLoop(block)
 	default:
 		return fmt.Errorf("unknown block type: %s", block.Type)
 	}
@@ -131,13 +133,14 @@ func (r *Renderer) renderText(block *models.Block) error {
 	return nil
 }
 
-func (r *Renderer) substituteVariables(text string) string { // TODO: use text/template instead of regex
-	re := regexp.MustCompile(`\{\{(\w+)\}\}`)
+func (r *Renderer) substituteVariables(text string) string {
+	re := regexp.MustCompile(`\{\{([\w.]+)\}\}`)
 
 	return re.ReplaceAllStringFunc(text, func(match string) string {
 		varName := strings.Trim(match, "{}")
 
-		if val, exists := r.context.Get(varName); exists {
+		val, exists := r.context.GetNested(varName)
+		if exists {
 			return fmt.Sprintf("%v", val)
 		}
 		return match
@@ -511,6 +514,42 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 
 func (r *Renderer) renderPageBreak(block *models.Block) error {
 	r.pdf.AddPage()
+	return nil
+}
+
+func (r *Renderer) renderLoop(block *models.Block) error {
+	if block.LoopProperties == nil {
+		return fmt.Errorf("loop block missing loopProperties")
+	}
+
+	props := block.LoopProperties
+
+	dataSource, exists := r.context.Get(props.DataSource)
+	if !exists {
+		return fmt.Errorf("loop dataSource not found in context: %s", props.DataSource)
+	}
+
+	items, ok := dataSource.([]any)
+	if !ok {
+		return fmt.Errorf("loop dataSource is not an array: %s", props.DataSource)
+	}
+
+	itemVar := props.ItemVar
+	if itemVar == "" {
+		itemVar = "item"
+	}
+
+	for _, item := range items {
+		r.context.Set(itemVar, item)
+		for _, child := range block.Children {
+			if err := r.RenderBlock(&child); err != nil {
+				r.context.Delete(itemVar)
+				return err
+			}
+		}
+		r.context.Delete(itemVar)
+	}
+
 	return nil
 }
 
