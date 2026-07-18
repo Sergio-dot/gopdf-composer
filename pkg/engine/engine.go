@@ -88,6 +88,29 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 	}
 
 	r := renderer.NewRenderer(runtimeCtx, fontDir, e.config.DefaultFont)
+	pdf := r.GetPDF()
+
+	// Load and register header assets
+	headerBlocks, err := e.loadAssetBlocks(cf.Document.HeaderAssets)
+	if err != nil {
+		return nil, err
+	}
+	if len(headerBlocks) > 0 {
+		pdf.SetHeaderFunc(func() {
+			r.RenderHeader(headerBlocks)
+		})
+	}
+
+	// Load and register footer assets
+	footerBlocks, err := e.loadAssetBlocks(cf.Document.FooterAssets)
+	if err != nil {
+		return nil, err
+	}
+	if len(footerBlocks) > 0 {
+		pdf.SetFooterFunc(func() {
+			r.RenderFooter(footerBlocks, 15)
+		})
+	}
 
 	// Process sections
 	for _, section := range cf.Document.Structure {
@@ -118,4 +141,16 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 	}
 
 	return r, nil
+}
+
+func (e *Engine) loadAssetBlocks(refs []models.AssetReference) ([]models.Block, error) {
+	var allBlocks []models.Block
+	for _, ref := range refs {
+		asset, err := e.loader.LoadAsset(ref.AssetID, ref.Version)
+		if err != nil {
+			return nil, err
+		}
+		allBlocks = append(allBlocks, asset.Blocks...)
+	}
+	return allBlocks, nil
 }

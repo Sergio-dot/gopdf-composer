@@ -525,6 +525,48 @@ func (r *Renderer) renderPageBreak(block *models.Block) error {
 	return nil
 }
 
+func (r *Renderer) RenderBlocks(blocks []models.Block) error {
+	for _, block := range blocks {
+		if err := r.RenderBlock(&block); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *Renderer) RenderBlocksAtY(y float64, blocks []models.Block) error {
+	origX := r.pdf.GetX()
+	origY := r.pdf.GetY()
+
+	r.pdf.SetXY(origX, y)
+	if err := r.RenderBlocks(blocks); err != nil {
+		r.pdf.SetXY(origX, origY)
+		return err
+	}
+
+	endY := r.pdf.GetY()
+	r.pdf.SetXY(origX, origY)
+	_ = endY
+	return nil
+}
+
+func (r *Renderer) RenderHeader(blocks []models.Block) error {
+	return r.RenderBlocks(blocks)
+}
+
+func (r *Renderer) RenderFooter(blocks []models.Block, offsetFromBottom float64) error {
+	r.pdf.SetY(-offsetFromBottom)
+	return r.RenderBlocks(blocks)
+}
+
+func (r *Renderer) GetPDF() *gofpdf.Fpdf {
+	return r.pdf
+}
+
+func (r *Renderer) GetContext() *models.RuntimeContext {
+	return r.context
+}
+
 func (r *Renderer) renderLoop(block *models.Block) error {
 	if block.LoopProperties == nil {
 		return fmt.Errorf("loop block missing loopProperties")

@@ -5,7 +5,9 @@ type ControlFlow struct {
 }
 
 type Document struct {
-	Structure []Section `json:"structure"`
+	Structure    []Section        `json:"structure"`
+	HeaderAssets []AssetReference `json:"headerAssets,omitempty"`
+	FooterAssets []AssetReference `json:"footerAssets,omitempty"`
 }
 
 type Section struct {
