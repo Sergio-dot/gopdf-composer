@@ -85,6 +85,7 @@ type TableProperties struct {
 	RowsDataSource string     `json:"rowsDataSource,omitempty"`
 	HeaderStyle    *CellStyle `json:"headerStyle,omitempty"`
 	RowStyle       *CellStyle `json:"rowStyle,omitempty"`
+	ColumnWidths   []float64  `json:"columnWidths,omitempty"`
 }
 
 // CellStyle defines the visual style for table header and row cells.

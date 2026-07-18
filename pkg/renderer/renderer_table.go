@@ -17,7 +17,27 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	var margins Margins
 	margins.Left, _, margins.Right, _ = r.pdf.GetMargins()
 	availableWidth := pageWidth - margins.Left - margins.Right
-	colWidth := availableWidth / float64(len(props.Headers))
+
+	colWidths := make([]float64, len(props.Headers))
+	if len(props.ColumnWidths) == len(props.Headers) {
+		var total float64
+		for _, w := range props.ColumnWidths {
+			total += w
+		}
+		if total > 0 {
+			for i, w := range props.ColumnWidths {
+				colWidths[i] = (w / total) * availableWidth
+			}
+		} else {
+			for i := range colWidths {
+				colWidths[i] = availableWidth / float64(len(props.Headers))
+			}
+		}
+	} else {
+		for i := range colWidths {
+			colWidths[i] = availableWidth / float64(len(props.Headers))
+		}
+	}
 
 	align := "C"
 	cellHeight := 5.0
@@ -39,8 +59,8 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		r.pdf.SetFont(r.defaultFont, "B", 10)
 	}
 
-	for _, header := range props.Headers {
-		r.pdf.CellFormat(colWidth, cellHeight, header, "", 0, align, true, 0, "")
+	for i, header := range props.Headers {
+		r.pdf.CellFormat(colWidths[i], cellHeight, header, "", 0, align, true, 0, "")
 	}
 	r.pdf.Ln(-1)
 
@@ -71,18 +91,18 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		templateRow := props.Rows[0]
 		for _, item := range items {
 			r.context.Set("item", item)
-			for _, cell := range templateRow {
+			for i, cell := range templateRow {
 				cell = r.substituteVariables(cell)
-				r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+				r.pdf.CellFormat(colWidths[i], cellHeight, cell, "", 0, "L", false, 0, "")
 			}
 			r.pdf.Ln(-1)
 			r.context.Delete("item")
 		}
 	} else {
 		for _, row := range props.Rows {
-			for _, cell := range row {
+			for i, cell := range row {
 				cell = r.substituteVariables(cell)
-				r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+				r.pdf.CellFormat(colWidths[i], cellHeight, cell, "", 0, "L", false, 0, "")
 			}
 			r.pdf.Ln(-1)
 		}
