@@ -84,7 +84,7 @@ func (e *Engine) GenerateToBytes(cf *models.ControlFlow, runtimeCtx *models.Runt
 func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContext) (*renderer.Renderer, error) {
 	// Create renderer
 	fontDir := e.config.FontDir
-	if fontDir == "" {
+	if fontDir == "" && e.config.AssetDir != "" {
 		fontDir = filepath.Join(e.config.AssetDir, "fonts")
 	}
 
