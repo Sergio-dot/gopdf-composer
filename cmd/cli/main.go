@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// 2. Ensure output directory exists
-	os.MkdirAll("output", 0755)
+	os.MkdirAll("output", 0o755)
 
 	// 3. Initialize Engine with Config
 	eng := engine.NewEngine(cfg)
