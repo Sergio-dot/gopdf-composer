@@ -9,9 +9,11 @@ type Block struct {
 	Children []Block `json:"children,omitempty"`
 
 	// Type specific properties
-	TextProperties  *TextProperties  `json:"textProperties,omitempty"`
-	ImageProperties *ImageProperties `json:"imageProperties,omitempty"`
-	TableProperties *TableProperties `json:"tableProperties,omitempty"`
+	TextProperties      *TextProperties      `json:"textProperties,omitempty"`
+	ImageProperties     *ImageProperties     `json:"imageProperties,omitempty"`
+	TableProperties     *TableProperties     `json:"tableProperties,omitempty"`
+	PageBreakProperties *PageBreakProperties `json:"pageBreakProperties,omitempty"`
+	LoopProperties      *LoopProperties      `json:"loopProperties,omitempty"`
 
 	// Container specific
 	Direction string  `json:"direction,omitempty"` // row or column
@@ -23,6 +25,13 @@ type Block struct {
 	MarginTop       *float64 `json:"marginTop,omitempty"`
 	MarginBottom    *float64 `json:"marginBottom,omitempty"`
 	BackgroundColor string   `json:"backgroundColor,omitempty"`
+}
+
+type PageBreakProperties struct{}
+
+type LoopProperties struct {
+	DataSource string `json:"dataSource"`
+	ItemVar    string `json:"itemVar,omitempty"`
 }
 
 type TextProperties struct {
@@ -50,10 +59,11 @@ type ImageProperties struct {
 }
 
 type TableProperties struct {
-	Headers     []string   `json:"headers"`
-	Rows        [][]string `json:"rows"`
-	HeaderStyle *CellStyle `json:"headerStyle,omitempty"`
-	RowStyle    *CellStyle `json:"rowStyle,omitempty"`
+	Headers        []string   `json:"headers"`
+	Rows           [][]string `json:"rows,omitempty"`
+	RowsDataSource string     `json:"rowsDataSource,omitempty"`
+	HeaderStyle    *CellStyle `json:"headerStyle,omitempty"`
+	RowStyle       *CellStyle `json:"rowStyle,omitempty"`
 }
 
 type CellStyle struct {

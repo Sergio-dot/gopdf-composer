@@ -32,6 +32,7 @@ func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir, defaultFont string)
 
 	pdf.SetFont(defaultFont, "", 12)
 	pdf.AddPage()
+	pdf.AliasNbPages("{nb}")
 
 	return &Renderer{pdf: pdf, context: runtimeCtx, defaultFont: defaultFont}
 }
@@ -46,6 +47,10 @@ func (r *Renderer) RenderBlock(block *models.Block) error {
 		return r.renderTable(block)
 	case "container":
 		return r.renderContainer(block)
+	case "pagebreak":
+		return r.renderPageBreak(block)
+	case "loop":
+		return r.renderLoop(block)
 	default:
 		return fmt.Errorf("unknown block type: %s", block.Type)
 	}
@@ -129,13 +134,21 @@ func (r *Renderer) renderText(block *models.Block) error {
 	return nil
 }
 
-func (r *Renderer) substituteVariables(text string) string { // TODO: use text/template instead of regex
-	re := regexp.MustCompile(`\{\{(\w+)\}\}`)
+func (r *Renderer) substituteVariables(text string) string {
+	re := regexp.MustCompile(`\{\{([\w.]+)\}\}`)
 
 	return re.ReplaceAllStringFunc(text, func(match string) string {
 		varName := strings.Trim(match, "{}")
 
-		if val, exists := r.context.Get(varName); exists {
+		switch varName {
+		case "page":
+			return fmt.Sprintf("%d", r.pdf.PageNo())
+		case "totalPages":
+			return "{nb}"
+		}
+
+		val, exists := r.context.GetNested(varName)
+		if exists {
 			return fmt.Sprintf("%v", val)
 		}
 		return match
@@ -261,16 +274,40 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		r.pdf.SetFont(r.defaultFont, "", 9)
 	}
 
-	if props.RowStyle.CellHeight > 0 {
+	if props.RowStyle != nil && props.RowStyle.CellHeight > 0 {
 		cellHeight = props.RowStyle.CellHeight
 	}
 
-	for _, row := range props.Rows {
-		for _, cell := range row {
-			cell = r.substituteVariables(cell)
-			r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+	if props.RowsDataSource != "" {
+		data, exists := r.context.Get(props.RowsDataSource)
+		if !exists {
+			return fmt.Errorf("table rowsDataSource not found in context: %s", props.RowsDataSource)
 		}
-		r.pdf.Ln(-1)
+		items, ok := data.([]any)
+		if !ok {
+			return fmt.Errorf("table rowsDataSource is not an array: %s", props.RowsDataSource)
+		}
+		if len(props.Rows) == 0 {
+			return fmt.Errorf("table with rowsDataSource must have at least one template row")
+		}
+		templateRow := props.Rows[0]
+		for _, item := range items {
+			r.context.Set("item", item)
+			for _, cell := range templateRow {
+				cell = r.substituteVariables(cell)
+				r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+			}
+			r.pdf.Ln(-1)
+			r.context.Delete("item")
+		}
+	} else {
+		for _, row := range props.Rows {
+			for _, cell := range row {
+				cell = r.substituteVariables(cell)
+				r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+			}
+			r.pdf.Ln(-1)
+		}
 	}
 
 	return nil
@@ -507,10 +544,91 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 	return nil
 }
 
+func (r *Renderer) renderPageBreak(block *models.Block) error {
+	r.pdf.AddPage()
+	return nil
+}
+
+func (r *Renderer) RenderBlocks(blocks []models.Block) error {
+	for _, block := range blocks {
+		if err := r.RenderBlock(&block); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *Renderer) RenderBlocksAtY(y float64, blocks []models.Block) error {
+	origX := r.pdf.GetX()
+	origY := r.pdf.GetY()
+
+	r.pdf.SetXY(origX, y)
+	if err := r.RenderBlocks(blocks); err != nil {
+		r.pdf.SetXY(origX, origY)
+		return err
+	}
+
+	r.pdf.SetXY(origX, origY)
+	return nil
+}
+
+func (r *Renderer) RenderHeader(blocks []models.Block) error {
+	return r.RenderBlocks(blocks)
+}
+
+func (r *Renderer) RenderFooter(blocks []models.Block, offsetFromBottom float64) error {
+	r.pdf.SetY(-offsetFromBottom)
+	return r.RenderBlocks(blocks)
+}
+
+func (r *Renderer) GetPDF() *gofpdf.Fpdf {
+	return r.pdf
+}
+
+func (r *Renderer) GetContext() *models.RuntimeContext {
+	return r.context
+}
+
+func (r *Renderer) renderLoop(block *models.Block) error {
+	if block.LoopProperties == nil {
+		return fmt.Errorf("loop block missing loopProperties")
+	}
+
+	props := block.LoopProperties
+
+	dataSource, exists := r.context.Get(props.DataSource)
+	if !exists {
+		return fmt.Errorf("loop dataSource not found in context: %s", props.DataSource)
+	}
+
+	items, ok := dataSource.([]any)
+	if !ok {
+		return fmt.Errorf("loop dataSource is not an array: %s", props.DataSource)
+	}
+
+	itemVar := props.ItemVar
+	if itemVar == "" {
+		itemVar = "item"
+	}
+
+	for _, item := range items {
+		r.context.Set(itemVar, item)
+		for _, child := range block.Children {
+			if err := r.RenderBlock(&child); err != nil {
+				r.context.Delete(itemVar)
+				return err
+			}
+		}
+		r.context.Delete(itemVar)
+	}
+
+	return nil
+}
+
 func (r *Renderer) SaveToFile(path string) error {
 	return r.pdf.OutputFileAndClose(path)
 }
 
-func (r *Renderer) WriteTo(w io.Writer) error {
-	return r.pdf.Output(w)
+func (r *Renderer) WriteTo(w io.Writer) (int64, error) {
+	return 0, r.pdf.Output(w)
 }
