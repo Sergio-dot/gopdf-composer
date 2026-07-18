@@ -1,0 +1,56 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Condition Evaluator Tests",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "marginBottom": 3
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "These sections appear/disappear based on condition results:",
+        "fontSize": 10,
+        "marginBottom": 4
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "userCountry=ES AND userTier=premium -> userCountry in [ES,PT] is TRUE -> section visible",
+        "fontSize": 9,
+        "fontColor": "#555555",
+        "marginBottom": 1
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "score=85 -> score>=80 is TRUE -> this appears",
+        "fontSize": 9,
+        "fontColor": "#555555",
+        "marginBottom": 1
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "score=85 -> score<80 is FALSE -> another section hidden (see below note)",
+        "fontSize": 9,
+        "fontColor": "#555555",
+        "marginBottom": 4
+      }
+    },
+    {
+      "type": "line",
+      "lineProperties": {
+        "color": "#3366cc",
+        "width": 0.3,
+        "margin": 4
+      }
+    }
+  ]
+}

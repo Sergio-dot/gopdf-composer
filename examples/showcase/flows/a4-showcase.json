@@ -1,0 +1,45 @@
+{
+  "document": {
+    "pageSize": "A4",
+    "orientation": "P",
+    "marginLeft": 15,
+    "marginTop": 15,
+    "marginRight": 15,
+    "marginBottom": 20,
+    "headerAssets": [
+      {"assetId": "header", "version": "1"}
+    ],
+    "footerAssets": [
+      {"assetId": "page-size-info", "version": "1"}
+    ],
+    "structure": [
+      {
+        "assets": [
+          {"assetId": "evaluator-demo", "version": "1"},
+          {"assetId": "team-table", "version": "1"},
+          {
+            "assetId": "conditional-section",
+            "version": "1",
+            "conditions": {
+              "and": [
+                {"field": "showAdvanced", "op": "==", "value": true},
+                {"field": "userTier", "op": "==", "value": "premium"}
+              ]
+            }
+          },
+          {
+            "assetId": "score-fail-notice",
+            "version": "1",
+            "conditions": {
+              "not": {"field": "score", "op": ">=", "value": 80}
+            }
+          },
+          {
+            "assetId": "features-loop",
+            "version": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

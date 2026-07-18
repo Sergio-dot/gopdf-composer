@@ -8,6 +8,13 @@ type Document struct {
 	Structure    []Section        `json:"structure"`
 	HeaderAssets []AssetReference `json:"headerAssets,omitempty"`
 	FooterAssets []AssetReference `json:"footerAssets,omitempty"`
+
+	PageSize     string  `json:"pageSize,omitempty"`
+	Orientation  string  `json:"orientation,omitempty"`
+	MarginLeft   float64 `json:"marginLeft,omitempty"`
+	MarginTop    float64 `json:"marginTop,omitempty"`
+	MarginRight  float64 `json:"marginRight,omitempty"`
+	MarginBottom float64 `json:"marginBottom,omitempty"`
 }
 
 type Section struct {
@@ -24,4 +31,8 @@ type Condition struct {
 	Field string `json:"field,omitempty"`
 	Op    string `json:"op,omitempty"`
 	Value any    `json:"value,omitempty"`
+
+	And []Condition `json:"and,omitempty"`
+	Or  []Condition `json:"or,omitempty"`
+	Not *Condition  `json:"not,omitempty"`
 }

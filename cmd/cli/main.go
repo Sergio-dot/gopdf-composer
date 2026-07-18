@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/Sergio-dot/gopdf-composer/config"
@@ -9,11 +9,12 @@ import (
 )
 
 func main() {
-	log.Println("PDF Document Engine - Starting...")
+	slog.Info("PDF Document Engine - Starting...")
 
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
+		slog.Error("Error loading config", "error", err)
+		os.Exit(1)
 	}
 
 	os.MkdirAll("output", 0o755)
@@ -22,8 +23,9 @@ func main() {
 
 	err = eng.GeneratePDF("", "", "")
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("PDF generation failed", "error", err)
+		os.Exit(1)
 	}
 
-	log.Println("PDF Generated successfully at:", cfg.OutputPath)
+	slog.Info("PDF generated successfully", "output", cfg.OutputPath)
 }

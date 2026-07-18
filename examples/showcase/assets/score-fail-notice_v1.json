@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "LOW SCORE -- This should NOT appear because score=85 passes the threshold.",
+        "fontSize": 10,
+        "fontColor": "#cc0000",
+        "marginBottom": 2
+      }
+    }
+  ]
+}
