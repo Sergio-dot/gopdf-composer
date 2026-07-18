@@ -21,7 +21,7 @@
 
 4. Push your branch and open a pull request against `main`. CI will run `go vet`, tests with the race detector, and coverage checks on Go 1.24 and 1.25.
 
-5. Once CI passes and the PR is reviewed, merge to `main`.
+5. Pull requests require maintainer approval before merging. Once CI passes and your PR is reviewed and approved, it will be merged to `main`.
 
 ## Code style
 
