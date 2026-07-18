@@ -1,0 +1,38 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Feature Status",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "marginBottom": 3
+      }
+    },
+    {
+      "type": "loop",
+      "loopProperties": {
+        "dataSource": "items",
+        "itemVar": "item"
+      },
+      "children": [
+        {
+          "type": "text",
+          "textProperties": {
+            "text": "  • {{item.label}} [{{item.status}}]",
+            "fontSize": 10,
+            "marginBottom": 1
+          }
+        }
+      ]
+    },
+    {
+      "type": "line",
+      "lineProperties": {
+        "color": "#cccccc",
+        "width": 0.2,
+        "margin": 4
+      }
+    }
+  ]
+}

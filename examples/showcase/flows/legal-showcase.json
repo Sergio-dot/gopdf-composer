@@ -1,0 +1,35 @@
+{
+  "document": {
+    "pageSize": "Legal",
+    "orientation": "P",
+    "marginLeft": 25,
+    "marginTop": 25,
+    "marginRight": 25,
+    "marginBottom": 30,
+    "headerAssets": [
+      {"assetId": "header", "version": "1"}
+    ],
+    "footerAssets": [
+      {"assetId": "page-size-info", "version": "1"}
+    ],
+    "structure": [
+      {
+        "assets": [
+          {"assetId": "evaluator-demo", "version": "1"},
+          {"assetId": "team-table", "version": "1"},
+          {
+            "assetId": "conditional-section",
+            "version": "1",
+            "conditions": {
+              "or": [
+                {"field": "userCountry", "op": "in", "value": ["ES", "PT", "FR"]},
+                {"field": "userTier", "op": "==", "value": "admin"}
+              ]
+            }
+          },
+          {"assetId": "features-loop", "version": "1"}
+        ]
+      }
+    ]
+  }
+}

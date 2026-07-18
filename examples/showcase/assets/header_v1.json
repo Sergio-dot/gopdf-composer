@@ -1,0 +1,32 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "{{title}}",
+        "fontSize": 22,
+        "fontWeight": "bold",
+        "align": "center",
+        "marginBottom": 4
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Generated: {{generatedAt}} | Author: {{author}} | Page {{page}}/{{totalPages}}",
+        "fontSize": 9,
+        "fontColor": "#888888",
+        "align": "center",
+        "marginBottom": 6
+      }
+    },
+    {
+      "type": "line",
+      "lineProperties": {
+        "color": "#3366cc",
+        "width": 0.6,
+        "margin": 2
+      }
+    }
+  ]
+}

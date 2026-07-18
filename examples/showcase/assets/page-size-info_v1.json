@@ -1,0 +1,23 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "{{sizeLabel}}",
+        "fontSize": 9,
+        "fontColor": "#aaaaaa",
+        "align": "center",
+        "marginTop": 15,
+        "marginBottom": 2
+      }
+    },
+    {
+      "type": "line",
+      "lineProperties": {
+        "color": "#dddddd",
+        "width": 0.2,
+        "margin": 0
+      }
+    }
+  ]
+}

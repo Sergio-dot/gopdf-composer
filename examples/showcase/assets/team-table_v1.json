@@ -1,0 +1,40 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Team Members ({{metrics.total}} total, {{metrics.active}} active)",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "marginBottom": 3
+      }
+    },
+    {
+      "type": "table",
+      "tableProperties": {
+        "headers": ["Name", "Role", "Status"],
+        "rowsDataSource": "team",
+        "rows": [["{{item.name}}", "{{item.role}}", "ACTIVE"]],
+        "headerStyle": {
+          "fontSize": 11,
+          "fontWeight": "bold",
+          "fontColor": "#ffffff",
+          "backgroundColor": "#3366cc",
+          "align": "left",
+          "cellHeight": 7
+        },
+        "rowStyle": {
+          "fontSize": 10,
+          "cellHeight": 6
+        }
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": " ",
+        "fontSize": 4
+      }
+    }
+  ]
+}

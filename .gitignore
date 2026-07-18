@@ -24,4 +24,4 @@ go.work.sum
 # Configuration and Output
 .env
 config.yaml
-output/
+**/output/

@@ -1,0 +1,40 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Advanced Analytics",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "marginBottom": 3
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "This section is only visible when showAdvanced=true AND userTier=premium. User country: {{userCountry}}",
+        "fontSize": 10,
+        "fontColor": "#226622",
+        "marginBottom": 2
+      }
+    },
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Score: {{score}}/100 — {{score}} >= 80: PASS",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "align": "center",
+        "marginBottom": 4
+      }
+    },
+    {
+      "type": "line",
+      "lineProperties": {
+        "color": "#33aa33",
+        "width": 0.4,
+        "margin": 2
+      }
+    }
+  ]
+}

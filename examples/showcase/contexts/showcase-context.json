@@ -1,0 +1,28 @@
+{
+  "title": "Feature Showcase Report",
+  "author": "gopdf-composer",
+  "generatedAt": "2026-07-18",
+  "showAdvanced": true,
+  "userTier": "premium",
+  "userCountry": "ES",
+  "score": 85,
+  "team": [
+    {"name": "Sergio", "role": "Lead", "active": true},
+    {"name": "Maria", "role": "Developer", "active": true},
+    {"name": "Carlos", "role": "Designer", "active": false},
+    {"name": "Ana", "role": "QA", "active": true}
+  ],
+  "metrics": {
+    "total": 4,
+    "active": 3
+  },
+  "items": [
+    {"label": "PDF Generation Engine", "status": "done"},
+    {"label": "Condition Evaluator", "status": "done"},
+    {"label": "Page Sizes Support", "status": "done"},
+    {"label": "Line Blocks", "status": "done"},
+    {"label": "Compound Conditions", "status": "done"},
+    {"label": "Batch Processing", "status": "pending"}
+  ],
+  "footerNote": "Powered by gopdf-composer"
+}
