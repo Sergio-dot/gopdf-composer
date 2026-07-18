@@ -1,102 +1,96 @@
 # gopdf-composer
 
-A flexible, agnostic PDF generation engine for Go. It allows you to generate complex documents by defining control flows and modular assets in JSON, supporting variable substitution and conditional rendering.
+[![CI](https://github.com/Sergio-dot/gopdf-composer/actions/workflows/ci.yml/badge.svg)](https://github.com/Sergio-dot/gopdf-composer/actions/workflows/ci.yml)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/Sergio-dot/gopdf-composer)](go.mod)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+A JSON-driven, library-first PDF generation engine for Go. Define document structure, reusable assets, and control flows declaratively — inject runtime data, apply conditional logic, and generate PDFs from your API or CLI.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    CLI["cmd/cli/"] --> Engine
+    HTTP["HTTP Handler"] --> Engine
+
+    Engine["pkg/engine/"] --> Loader["pkg/loader/"]
+    Engine --> Evaluator["pkg/evaluator/"]
+    Engine --> Renderer["pkg/renderer/"]
+
+    Loader --> FS[(Filesystem)]
+    Loader --> S3[(S3 / Blob)]
+    Loader --> DB[(Database)]
+
+    Evaluator --> Models["pkg/models/"]
+    Renderer --> Models
+    Engine --> Config["config/"]
+
+    Renderer --> PDF[PDF Output]
+```
+
+| Component | Package | Role |
+|-----------|---------|------|
+| Data types | `pkg/models/` | Asset, Block, ControlFlow, RuntimeContext, Condition |
+| Asset loading | `pkg/loader/` | Pluggable `AssetLoader` interface (filesystem, S3, DB) |
+| Conditions | `pkg/evaluator/` | Expression evaluator: `==`, `!=`, `>`, `<`, `contains`, `in`, `and`/`or`/`not` |
+| PDF rendering | `pkg/renderer/` | Block-by-block rendering via gofpdf (9 files by block type) |
+| Orchestration | `pkg/engine/` | Pipeline: load → evaluate → render → output |
+| Configuration | `config/` | Viper: YAML, `.env`, `GOPDF_` env vars |
 
 ## Features
 
-- **JSON-Driven**: Define your document structure and content blocks in JSON.
-- **Conditional Rendering**: Use logical conditions to include or exclude sections of the document based on runtime data.
-- **Variable Substitution**: Inject data into your documents using `{{variable}}` syntax.
-- **Modular Assets**: Manage reusable content blocks (Text, Images, Tables, Containers).
-- **Flexible Configuration**: Configure via environment variables, YAML, or `.env` files using Viper.
-- **Library Friendly**: Can be used as a CLI tool or imported as a Go module for APIs.
+- **JSON-Driven**: Document structure (sections, asset refs) and content blocks (text, images, tables, lines) defined in JSON.
+- **Compound Conditions**: `and`, `or`, `not` logic on asset visibility with full operator support (`==`, `!=`, `>`, `<`, `>=`, `<=`, `in`, `contains`).
+- **Variable Substitution**: Inject data with `{{variable}}` syntax, including dot-notation for nested values.
+- **Modular Assets**: Text, Image, Table (styled headers/rows, dynamic data sources), Container (row/column), Loop (iterate arrays), Line (horizontal rules), Page Break.
+- **Page Configuration**: Custom page size (A3, A4, A5, Letter, Legal), orientation, and margins per document.
+- **Configurable**: 12-factor via Viper — YAML, `.env`, and `GOPDF_` environment variables.
+- **Library First**: `GenerateToBytes(cf, ctx)` for HTTP APIs, `GenerateToFile` for CLI, `GenerateToWriter` for streams.
 
-## Installation
+## Quick Start
 
 ```bash
 go get github.com/Sergio-dot/gopdf-composer
 ```
 
+### Generate a PDF from your API
+
+```go
+eng := engine.NewEngine(cfg)
+flow := &models.ControlFlow{
+    Document: models.Document{Structure: []models.Section{
+        {Assets: []models.AssetReference{{AssetID: "greeting", Version: "1"}}},
+    }},
+}
+ctx := &models.RuntimeContext{Data: map[string]any{"user": "Sergio"}}
+
+pdfBytes, _ := eng.GenerateToBytes(flow, ctx)
+// write pdfBytes to http.ResponseWriter
+```
+
+### Run the showcase examples
+
+```bash
+cd examples/showcase && go run .
+```
+
+Generates PDFs for A3, A4, A5, Letter, and Legal — exercising conditions, loops, tables, lines, and page configuration.
+
 ## Configuration
-
-The engine uses **Viper** for configuration. It looks for settings in the following order:
-
-1.  **Environment Variables**: Prefixed with `GOPDF_` (e.g., `GOPDF_ASSET_DIR`).
-2.  **`.env` File**: Key-value pairs (e.g., `ASSET_DIR=assets`).
-3.  **`config.yaml`**: Standard YAML format.
-
-### Available Settings
 
 | Key | Description | Default |
 |-----|-------------|---------|
 | `asset_dir` | Directory containing JSON assets | `assets/` |
-| `control_flow_path` | Path to the document structure JSON | `flows/section_oriented_control_flow.json` |
-| `runtime_context_path` | Path to the runtime data JSON | `contexts/runtime_context.json` |
-| `output_path` | Where to save the generated PDF | `output/document.pdf` |
+| `control_flow_path` | Path to the document structure JSON | `flows/flow.json` |
+| `runtime_context_path` | Path to the runtime data JSON | `contexts/context.json` |
+| `output_path` | Output PDF path | `output/document.pdf` |
 | `font_dir` | Directory containing TTF fonts | `assets/fonts` |
+| `default_font` | Default font family | `Arial` |
 
-## Usage
+## Contributing
 
-### As a CLI Tool
-
-1. Clone the repo and build:
-   ```bash
-   go build -o gopdf main.go
-   ```
-2. Run with default config:
-   ```bash
-   ./gopdf
-   ```
-3. Run with custom environment:
-   ```bash
-   GOPDF_OUTPUT_PATH="my_report.pdf" ./gopdf
-   ```
-
-### As a Library (API)
-
-```go
-import (
-    "github.com/Sergio-dot/gopdf-composer/config"
-    "github.com/Sergio-dot/gopdf-composer/pkg/engine"
-    "github.com/Sergio-dot/gopdf-composer/pkg/models"
-)
-
-func GenerateHandler(w http.ResponseWriter, r *http.Request) {
-    // 1. Load basic config
-    cfg, _ := config.LoadConfig()
-    eng := engine.NewEngine(cfg)
-
-    // 2. Prepare data (usually from DB or Request)
-    flow := &models.ControlFlow{ /* ... */ }
-    ctx := &models.RuntimeContext{Data: map[string]any{"user": "Sergio"}}
-
-    // 3. Generate to bytes for HTTP response
-    pdfBytes, err := eng.GenerateToBytes(flow, ctx)
-    if err != nil {
-        http.Error(w, err.Error(), 500)
-        return
-    }
-
-    w.Header().Set("Content-Type", "application/pdf")
-    w.Write(pdfBytes)
-}
-```
-
-## Custom Asset Loaders
-
-You can implement the `AssetLoader` interface to load assets from S3, a Database, or any other source:
-
-```go
-type MyCustomLoader struct {}
-
-func (l *MyCustomLoader) LoadAsset(id, version string) (*models.Asset, error) {
-    // Fetch from Database...
-}
-
-// ... in your code
-eng.SetLoader(&MyCustomLoader{})
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branch conventions, testing, and architecture details.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT — see [LICENSE](LICENSE).
