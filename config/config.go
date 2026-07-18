@@ -27,7 +27,6 @@ func LoadConfig() (*Config, error) {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	// If a config file is present, use it
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
@@ -38,10 +37,10 @@ func LoadConfig() (*Config, error) {
 		}
 	}
 
-	// Also support .env files if present
 	viper.SetConfigFile(".env")
+	viper.SetConfigType("env")
 	if err := viper.MergeInConfig(); err != nil {
-		// Ignore if .env is missing, we already have defaults and maybe config.yaml
+		// .env is optional, defaults and config.yaml already loaded
 	}
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {

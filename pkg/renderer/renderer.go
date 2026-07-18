@@ -63,12 +63,10 @@ func (r *Renderer) renderText(block *models.Block) error {
 
 	props := block.TextProperties
 
-	// top margin
 	if props.MarginTop > 0 {
 		r.pdf.Ln(props.MarginTop)
 	}
 
-	// font
 	fontFamily := props.FontFamily
 	if fontFamily == "" {
 		fontFamily = r.defaultFont
@@ -83,13 +81,10 @@ func (r *Renderer) renderText(block *models.Block) error {
 	}
 	r.pdf.SetFont(fontFamily, fontWeight, props.FontSize)
 
-	// text color
 	r.textColor(props.FontColor)
 
-	// substitute variables
-	text := r.substituteVariables(props.Text) // TODO: maybe is better to use text/template
+	text := r.substituteVariables(props.Text)
 
-	// alignment
 	align := "L"
 	switch props.Align {
 	case "center":
@@ -98,23 +93,21 @@ func (r *Renderer) renderText(block *models.Block) error {
 		align = "R"
 	}
 
-	if props.BackgroundColor != "" { // with bg color
+	if props.BackgroundColor != "" {
 		pageWidth, _ := r.pdf.GetPageSize()
 		var margins Margins
 		margins.Left, _, margins.Right, _ = r.pdf.GetMargins()
 		width := pageWidth - margins.Left - margins.Right
 
-		// background color
 		r.backgroundColor(props.BackgroundColor)
 
-		// line height
 		lineHeight := props.FontSize * 0.5
 		if props.LineHeight > 0 {
 			lineHeight = props.LineHeight
 		}
 
 		r.pdf.MultiCell(width, lineHeight, text, "", align, true)
-	} else { // no bg color
+	} else {
 		lineHeight := props.FontSize * 0.5
 		if props.LineHeight > 0 {
 			lineHeight = props.LineHeight
@@ -122,11 +115,9 @@ func (r *Renderer) renderText(block *models.Block) error {
 		r.pdf.MultiCell(0, lineHeight, text, "", align, false)
 	}
 
-	// reset colors
 	r.textColor("")
 	r.backgroundColor("")
 
-	// bottom margin
 	if props.MarginBottom > 0 {
 		r.pdf.Ln(props.MarginBottom)
 	}
@@ -163,19 +154,16 @@ func (r *Renderer) renderImage(block *models.Block) error {
 
 	props := block.ImageProperties
 
-	// Handle top margin
 	if props.MarginTop > 0 {
 		r.pdf.Ln(props.MarginTop)
 	}
 
-	// Get current position
 	baseX := r.pdf.GetX()
 	baseY := r.pdf.GetY()
 
 	x := baseX
 	y := baseY
 
-	// Handle alignment
 	if props.Align != "" {
 		pageWidth, _ := r.pdf.GetPageSize()
 		var margins Margins
@@ -192,32 +180,25 @@ func (r *Renderer) renderImage(block *models.Block) error {
 		}
 	}
 
-	// Apply offsets
 	imgX := x + props.OffsetX
 	imgY := y + props.OffsetY
 
-	// Render image
 	opts := gofpdf.ImageOptions{ImageType: "", ReadDpi: true}
 	r.pdf.ImageOptions(props.Path, imgX, imgY, props.Width, props.Height, false, opts, 0, "")
 
-	// Move cursor below image
 	renderedHeight := props.Height
 	if renderedHeight == 0 {
-		// Attempt to get image info to find aspect ratio if height is auto
 		info := r.pdf.GetImageInfo(props.Path)
 		if info != nil && info.Width() > 0 {
 			renderedHeight = props.Width * (info.Height() / info.Width())
 		} else {
-			// Fallback if info not available
 			renderedHeight = props.Width * 0.75
 		}
 	}
 
-	// Final Y is the bottom of the image
 	finalY := imgY + renderedHeight
 	r.pdf.SetY(finalY)
 
-	// Handle bottom margin
 	if props.MarginBottom > 0 {
 		r.pdf.Ln(props.MarginBottom)
 	}
@@ -232,14 +213,12 @@ func (r *Renderer) renderTable(block *models.Block) error {
 
 	props := block.TableProperties
 
-	// Calculate column widths
 	pageWidth, _ := r.pdf.GetPageSize()
 	var margins Margins
 	margins.Left, _, margins.Right, _ = r.pdf.GetMargins()
 	availableWidth := pageWidth - margins.Left - margins.Right
 	colWidth := availableWidth / float64(len(props.Headers))
 
-	// Render headers
 	align := "C"
 	cellHeight := 5.0
 
@@ -265,7 +244,6 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	}
 	r.pdf.Ln(-1)
 
-	// Render rows
 	if props.RowStyle != nil {
 		r.applyTableCellStyle(props.RowStyle)
 	} else {
@@ -325,7 +303,6 @@ func (r *Renderer) applyTableCellStyle(style *models.CellStyle) {
 			fontStyle = "I"
 		}
 
-		// apply headers colors
 		r.textColor(style.FontColor)
 		r.backgroundColor(style.BackgroundColor)
 
@@ -392,51 +369,39 @@ func (r *Renderer) renderRowContainer(block *models.Block) error {
 	startX := margins.Left
 	startY := r.pdf.GetY()
 
-	// 1: calculate max height by rendering children
 	currentX := startX
 	maxHeight := 0.0
 
 	for _, child := range block.Children {
-		// Calculate child width
 		childWidth := availableWidth / float64(len(block.Children))
 		if child.WidthPercent != nil {
 			childWidth = availableWidth * (*child.WidthPercent / 100)
 		}
 
-		// Set position for current child
 		r.pdf.SetXY(currentX, startY)
 
-		// Save the current margins and set temporary right margin for this column
 		oldRightMargin := margins.Right
 		newRightMargin := pageWidth - (currentX + childWidth)
 		r.pdf.SetMargins(currentX, margins.Top, newRightMargin)
 
-		// Render child
 		if err := r.RenderBlock(&child); err != nil {
-			// Restore margins before returning error
 			r.pdf.SetMargins(margins.Left, margins.Top, oldRightMargin)
 			return err
 		}
 
-		// Restore original margins
 		r.pdf.SetMargins(margins.Left, margins.Top, oldRightMargin)
 
-		// Update max height
 		childHeight := r.pdf.GetY() - startY
 		if childHeight > maxHeight {
 			maxHeight = childHeight
 		}
 
-		// Move to next col
 		currentX += childWidth + block.Gap
 	}
 
-	// draw background BEHIND the content if specified
 	if block.BackgroundColor != "" && maxHeight > 0 {
-		// Go back to start position to draw background
 		r.pdf.SetXY(startX, startY)
 
-		// draw rectangle
 		r.backgroundColor(block.BackgroundColor)
 		if block.Border {
 			r.drawColor(block.BackgroundColor)
@@ -446,39 +411,30 @@ func (r *Renderer) renderRowContainer(block *models.Block) error {
 		}
 		r.backgroundColor("")
 
-		// 2: re-render children on top of background
 		currentX = startX
 		for _, child := range block.Children {
-			// Calculate child width
 			childWidth := availableWidth / float64(len(block.Children))
 			if child.WidthPercent != nil {
 				childWidth = availableWidth * (*child.WidthPercent / 100)
 			}
 
-			// Set position for current child
 			r.pdf.SetXY(currentX, startY)
 
-			// Save the current margins and set temporary right margin for this column
 			oldRightMargin := margins.Right
 			newRightMargin := pageWidth - (currentX + childWidth)
 			r.pdf.SetMargins(currentX, margins.Top, newRightMargin)
 
-			// Render child
 			if err := r.RenderBlock(&child); err != nil {
-				// Restore margins before returning error
 				r.pdf.SetMargins(margins.Left, margins.Top, oldRightMargin)
 				return err
 			}
 
-			// Restore original margins
 			r.pdf.SetMargins(margins.Left, margins.Top, oldRightMargin)
 
-			// Move to next col
 			currentX += childWidth + block.Gap
 		}
 	}
 
-	// Move cursor below the entire row
 	r.pdf.SetXY(margins.Left, startY+maxHeight)
 
 	return nil
@@ -493,13 +449,11 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 	startY := r.pdf.GetY()
 	startX := r.pdf.GetX()
 
-	// 1: render children to calculate total height
 	for i, child := range block.Children {
 		if err := r.RenderBlock(&child); err != nil {
 			return err
 		}
 
-		// add gap
 		if i < len(block.Children)-1 && block.Gap > 0 {
 			r.pdf.Ln(block.Gap)
 		}
@@ -508,17 +462,14 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 	endY := r.pdf.GetY()
 	totalHeight := endY - startY
 
-	// draw background and re-render if background color specified
 	if block.BackgroundColor != "" && totalHeight > 0 {
 		pageWidth, _ := r.pdf.GetPageSize()
 		var margins Margins
 		margins.Left, _, margins.Right, _ = r.pdf.GetMargins()
 		availableWidth := pageWidth - margins.Left - margins.Right
 
-		// Go back to start to draw background
 		r.pdf.SetXY(startX, startY)
 
-		// draw rectangle
 		r.backgroundColor(block.BackgroundColor)
 		if block.Border {
 			r.pdf.Rect(startX, startY, availableWidth, totalHeight, "D")
@@ -527,14 +478,12 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 		}
 		r.backgroundColor("")
 
-		// 2: re-render children on top of background
 		r.pdf.SetXY(startX, startY)
 		for i, child := range block.Children {
 			if err := r.RenderBlock(&child); err != nil {
 				return err
 			}
 
-			// add gap
 			if i < len(block.Children)-1 && block.Gap > 0 {
 				r.pdf.Ln(block.Gap)
 			}
@@ -544,7 +493,7 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 	return nil
 }
 
-func (r *Renderer) renderPageBreak(block *models.Block) error {
+func (r *Renderer) renderPageBreak(_ *models.Block) error {
 	r.pdf.AddPage()
 	return nil
 }

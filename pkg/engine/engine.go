@@ -29,7 +29,6 @@ func (e *Engine) SetLoader(l loader.AssetLoader) {
 }
 
 func (e *Engine) GeneratePDF(controlFlowPath, runtimeContextPath, outputPath string) error {
-	// If paths are empty, use those from config
 	if controlFlowPath == "" {
 		controlFlowPath = e.config.ControlFlowPath
 	}
@@ -40,19 +39,16 @@ func (e *Engine) GeneratePDF(controlFlowPath, runtimeContextPath, outputPath str
 		outputPath = e.config.OutputPath
 	}
 
-	// Load control flow
 	cf, err := loader.LoadControlFlow(controlFlowPath)
 	if err != nil {
 		return err
 	}
 
-	// Load runtime context
 	runtimeCtx, err := loader.LoadRuntimeContext(runtimeContextPath)
 	if err != nil {
 		return err
 	}
 
-	// Save PDF to file
 	return e.GenerateToFile(cf, runtimeCtx, outputPath)
 }
 
@@ -82,7 +78,6 @@ func (e *Engine) GenerateToBytes(cf *models.ControlFlow, runtimeCtx *models.Runt
 }
 
 func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContext) (*renderer.Renderer, error) {
-	// Create renderer
 	fontDir := e.config.FontDir
 	if fontDir == "" && e.config.AssetDir != "" {
 		fontDir = filepath.Join(e.config.AssetDir, "fonts")
@@ -91,7 +86,6 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 	r := renderer.NewRenderer(runtimeCtx, fontDir, e.config.DefaultFont)
 	pdf := r.GetPDF()
 
-	// Load and register header assets
 	headerBlocks, err := e.loadAssetBlocks(cf.Document.HeaderAssets)
 	if err != nil {
 		return nil, err
@@ -102,7 +96,6 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 		})
 	}
 
-	// Load and register footer assets
 	footerBlocks, err := e.loadAssetBlocks(cf.Document.FooterAssets)
 	if err != nil {
 		return nil, err
@@ -113,10 +106,8 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 		})
 	}
 
-	// Process sections
 	for _, section := range cf.Document.Structure {
 		for _, assetRef := range section.Assets {
-			// Evaluate condition
 			shouldInclude, err := evaluator.Evaluate(assetRef.Conditions, runtimeCtx)
 			if err != nil {
 				return nil, err
@@ -126,13 +117,11 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 				continue
 			}
 
-			// Load asset
 			asset, err := e.loader.LoadAsset(assetRef.AssetID, assetRef.Version)
 			if err != nil {
 				return nil, err
 			}
 
-			// Render blocks
 			for _, block := range asset.Blocks {
 				if err := r.RenderBlock(&block); err != nil {
 					return nil, err
