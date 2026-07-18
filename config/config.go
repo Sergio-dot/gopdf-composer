@@ -38,7 +38,10 @@ func LoadConfig() (*Config, error) {
 	}
 
 	viper.SetConfigFile(".env")
-	viper.MergeInConfig()
+	viper.SetConfigType("env")
+	if err := viper.MergeInConfig(); err != nil {
+		// .env is optional, defaults and config.yaml already loaded
+	}
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, err
