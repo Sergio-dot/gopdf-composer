@@ -1,9 +1,14 @@
 package models
 
+// Asset is a reusable collection of blocks loaded by ID and version.
 type Asset struct {
 	Blocks []Block `json:"blocks"`
 }
 
+// Block is a single renderable element in a PDF document.
+// The Type field determines which properties are used (TextProperties,
+// ImageProperties, TableProperties, etc.).
+// Supported types: text, image, table, container, pagebreak, loop, line.
 type Block struct {
 	Type     string  `json:"type"`
 	Children []Block `json:"children,omitempty"`
@@ -28,19 +33,24 @@ type Block struct {
 	BackgroundColor string   `json:"backgroundColor,omitempty"`
 }
 
+// PageBreakProperties marks a block as a manual page break.
 type PageBreakProperties struct{}
 
+// LoopProperties configures a loop block that iterates over a data source
+// array from the runtime context, rendering children for each item.
 type LoopProperties struct {
 	DataSource string `json:"dataSource"`
 	ItemVar    string `json:"itemVar,omitempty"`
 }
 
+// LineProperties configures a horizontal line separator.
 type LineProperties struct {
 	Color  string  `json:"color,omitempty"`
 	Width  float64 `json:"width,omitempty"`
 	Margin float64 `json:"margin,omitempty"`
 }
 
+// TextProperties configures a text block with font styling, alignment, and margins.
 type TextProperties struct {
 	Text            string  `json:"text"`
 	FontFamily      string  `json:"fontFamily,omitempty"`
@@ -54,6 +64,8 @@ type TextProperties struct {
 	MarginBottom    float64 `json:"marginBottom,omitempty"`
 }
 
+// ImageProperties configures an image block with path, dimensions, alignment,
+// and offsets. Set Height to 0 for automatic aspect ratio calculation.
 type ImageProperties struct {
 	Path         string  `json:"path"`
 	Width        float64 `json:"width"`
@@ -65,6 +77,8 @@ type ImageProperties struct {
 	OffsetY      float64 `json:"offsetY,omitempty"`
 }
 
+// TableProperties configures a table with headers, static rows, and optional
+// dynamic rows sourced from a context array via RowsDataSource.
 type TableProperties struct {
 	Headers        []string   `json:"headers"`
 	Rows           [][]string `json:"rows,omitempty"`
@@ -73,6 +87,7 @@ type TableProperties struct {
 	RowStyle       *CellStyle `json:"rowStyle,omitempty"`
 }
 
+// CellStyle defines the visual style for table header and row cells.
 type CellStyle struct {
 	CellHeight      float64 `json:"cellHeight,omitempty"`
 	FontSize        float64 `json:"fontSize,omitempty"`

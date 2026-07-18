@@ -1,3 +1,5 @@
+// Package engine orchestrates the PDF generation pipeline: loading assets,
+// evaluating conditions, rendering blocks, and producing output.
 package engine
 
 import (
@@ -12,11 +14,15 @@ import (
 	"github.com/Sergio-dot/gopdf-composer/pkg/renderer"
 )
 
+// Engine is the primary orchestrator for PDF generation. It holds configuration
+// and an AssetLoader, and provides methods to generate PDFs to files, writers,
+// or byte slices.
 type Engine struct {
 	config *config.Config
 	loader loader.AssetLoader
 }
 
+// NewEngine creates an Engine with the given config and a filesystem-based asset loader.
 func NewEngine(cfg *config.Config) *Engine {
 	return &Engine{
 		config: cfg,
@@ -24,10 +30,13 @@ func NewEngine(cfg *config.Config) *Engine {
 	}
 }
 
+// SetLoader replaces the default filesystem asset loader with a custom implementation.
 func (e *Engine) SetLoader(l loader.AssetLoader) {
 	e.loader = l
 }
 
+// GeneratePDF loads control flow and runtime context from files, generates the
+// PDF, and writes it to the output path. Empty path arguments fall back to config defaults.
 func (e *Engine) GeneratePDF(controlFlowPath, runtimeContextPath, outputPath string) error {
 	if controlFlowPath == "" {
 		controlFlowPath = e.config.ControlFlowPath
@@ -52,6 +61,8 @@ func (e *Engine) GeneratePDF(controlFlowPath, runtimeContextPath, outputPath str
 	return e.GenerateToFile(cf, runtimeCtx, outputPath)
 }
 
+// GenerateToFile renders the given control flow and runtime context and saves
+// the resulting PDF to the specified path.
 func (e *Engine) GenerateToFile(cf *models.ControlFlow, runtimeCtx *models.RuntimeContext, outputPath string) error {
 	renderer, err := e.render(cf, runtimeCtx)
 	if err != nil {
@@ -60,6 +71,8 @@ func (e *Engine) GenerateToFile(cf *models.ControlFlow, runtimeCtx *models.Runti
 	return renderer.SaveToFile(outputPath)
 }
 
+// GenerateToWriter renders the given control flow and runtime context and writes
+// the resulting PDF to the provided io.Writer.
 func (e *Engine) GenerateToWriter(cf *models.ControlFlow, runtimeCtx *models.RuntimeContext, w io.Writer) error {
 	renderer, err := e.render(cf, runtimeCtx)
 	if err != nil {
@@ -69,6 +82,8 @@ func (e *Engine) GenerateToWriter(cf *models.ControlFlow, runtimeCtx *models.Run
 	return err
 }
 
+// GenerateToBytes renders the given control flow and runtime context and returns
+// the resulting PDF as a byte slice. Suitable for HTTP responses.
 func (e *Engine) GenerateToBytes(cf *models.ControlFlow, runtimeCtx *models.RuntimeContext) ([]byte, error) {
 	var buf bytes.Buffer
 	if err := e.GenerateToWriter(cf, runtimeCtx, &buf); err != nil {

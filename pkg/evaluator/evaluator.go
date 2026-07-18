@@ -1,3 +1,8 @@
+// Package evaluator evaluates conditions against runtime contexts to determine
+// whether assets should be included in the generated document.
+//
+// Supported leaf operators: ==, !=, >, <, >=, <=, in, contains.
+// Compound operators: and, or, not.
 package evaluator
 
 import (
@@ -8,6 +13,10 @@ import (
 	"github.com/Sergio-dot/gopdf-composer/pkg/models"
 )
 
+// Evaluate resolves a Condition against a RuntimeContext, returning whether
+// the condition is satisfied. A nil condition always evaluates to true.
+// Supports leaf conditions (==, !=, >, <, >=, <=, in, contains) and compound
+// conditions (and, or, not).
 func Evaluate(condition *models.Condition, runtimeCtx *models.RuntimeContext) (bool, error) {
 	if condition == nil {
 		return true, nil
