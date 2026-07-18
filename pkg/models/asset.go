@@ -9,9 +9,10 @@ type Block struct {
 	Children []Block `json:"children,omitempty"`
 
 	// Type specific properties
-	TextProperties  *TextProperties  `json:"textProperties,omitempty"`
-	ImageProperties *ImageProperties `json:"imageProperties,omitempty"`
-	TableProperties *TableProperties `json:"tableProperties,omitempty"`
+	TextProperties      *TextProperties      `json:"textProperties,omitempty"`
+	ImageProperties     *ImageProperties     `json:"imageProperties,omitempty"`
+	TableProperties     *TableProperties     `json:"tableProperties,omitempty"`
+	PageBreakProperties *PageBreakProperties `json:"pageBreakProperties,omitempty"`
 
 	// Container specific
 	Direction string  `json:"direction,omitempty"` // row or column
@@ -24,6 +25,8 @@ type Block struct {
 	MarginBottom    *float64 `json:"marginBottom,omitempty"`
 	BackgroundColor string   `json:"backgroundColor,omitempty"`
 }
+
+type PageBreakProperties struct{}
 
 type TextProperties struct {
 	Text            string  `json:"text"`

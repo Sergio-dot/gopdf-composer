@@ -46,6 +46,8 @@ func (r *Renderer) RenderBlock(block *models.Block) error {
 		return r.renderTable(block)
 	case "container":
 		return r.renderContainer(block)
+	case "pagebreak":
+		return r.renderPageBreak(block)
 	default:
 		return fmt.Errorf("unknown block type: %s", block.Type)
 	}
@@ -504,6 +506,11 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 		}
 	}
 
+	return nil
+}
+
+func (r *Renderer) renderPageBreak(block *models.Block) error {
+	r.pdf.AddPage()
 	return nil
 }
 
