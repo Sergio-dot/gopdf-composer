@@ -38,16 +38,7 @@
 
 ## Architecture
 
-```
-cmd/cli/        CLI entry point (slog logging, config loading)
-config/         Viper-based configuration (YAML, .env, env vars)
-pkg/
-  models/       Data types (Asset, Block, ControlFlow, RuntimeContext)
-  loader/       Asset loading with pluggable AssetLoader interface
-  evaluator/    Conditional expression evaluation (==, !=, >, <, in, etc.)
-  renderer/     PDF generation via gofpdf (one file per block type)
-  engine/       Orchestrator for the full pipeline
-```
+See the [README](README.md#architecture) for the architecture diagram and package breakdown.
 
 ## Project structure
 
