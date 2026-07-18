@@ -544,9 +544,7 @@ func (r *Renderer) RenderBlocksAtY(y float64, blocks []models.Block) error {
 		return err
 	}
 
-	endY := r.pdf.GetY()
 	r.pdf.SetXY(origX, origY)
-	_ = endY
 	return nil
 }
 
@@ -607,6 +605,6 @@ func (r *Renderer) SaveToFile(path string) error {
 	return r.pdf.OutputFileAndClose(path)
 }
 
-func (r *Renderer) WriteTo(w io.Writer) error {
-	return r.pdf.Output(w)
+func (r *Renderer) WriteTo(w io.Writer) (int64, error) {
+	return 0, r.pdf.Output(w)
 }

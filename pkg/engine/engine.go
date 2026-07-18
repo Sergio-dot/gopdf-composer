@@ -69,7 +69,8 @@ func (e *Engine) GenerateToWriter(cf *models.ControlFlow, runtimeCtx *models.Run
 	if err != nil {
 		return err
 	}
-	return renderer.WriteTo(w)
+	_, err = renderer.WriteTo(w)
+	return err
 }
 
 func (e *Engine) GenerateToBytes(cf *models.ControlFlow, runtimeCtx *models.RuntimeContext) ([]byte, error) {
