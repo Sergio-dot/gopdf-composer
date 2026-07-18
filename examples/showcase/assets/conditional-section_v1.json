@@ -21,7 +21,7 @@
     {
       "type": "text",
       "textProperties": {
-        "text": "Score: {{score}}/100 — {{score}} >= 80: PASS",
+        "text": "Score: {{score}}/100 -- {{score}} >= 80: PASS",
         "fontSize": 12,
         "fontWeight": "bold",
         "align": "center",

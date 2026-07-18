@@ -19,7 +19,7 @@
         {
           "type": "text",
           "textProperties": {
-            "text": "  • {{item.label}} [{{item.status}}]",
+            "text": "  - {{item.label}} [{{item.status}}]",
             "fontSize": 10,
             "marginBottom": 1
           }

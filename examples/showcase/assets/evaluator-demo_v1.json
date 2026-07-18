@@ -20,7 +20,7 @@
     {
       "type": "text",
       "textProperties": {
-        "text": "userCountry=ES AND userTier=premium → userCountry in [ES,PT] is TRUE → section visible",
+        "text": "userCountry=ES AND userTier=premium -> userCountry in [ES,PT] is TRUE -> section visible",
         "fontSize": 9,
         "fontColor": "#555555",
         "marginBottom": 1
@@ -29,7 +29,7 @@
     {
       "type": "text",
       "textProperties": {
-        "text": "score=85 → score>=80 is TRUE → this appears",
+        "text": "score=85 -> score>=80 is TRUE -> this appears",
         "fontSize": 9,
         "fontColor": "#555555",
         "marginBottom": 1
@@ -38,7 +38,7 @@
     {
       "type": "text",
       "textProperties": {
-        "text": "score=85 → score<80 is FALSE → another section hidden (see below note)",
+        "text": "score=85 -> score<80 is FALSE -> another section hidden (see below note)",
         "fontSize": 9,
         "fontColor": "#555555",
         "marginBottom": 4
