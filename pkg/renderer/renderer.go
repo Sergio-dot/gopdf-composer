@@ -134,10 +134,11 @@ func (r *Renderer) renderText(block *models.Block) error {
 	return nil
 }
 
-func (r *Renderer) substituteVariables(text string) string {
-	re := regexp.MustCompile(`\{\{([\w.]+)\}\}`)
+var varRe = regexp.MustCompile(`\{\{([\w.]+)\}\}`)
 
-	return re.ReplaceAllStringFunc(text, func(match string) string {
+func (r *Renderer) substituteVariables(text string) string {
+
+	return varRe.ReplaceAllStringFunc(text, func(match string) string {
 		varName := strings.Trim(match, "{}")
 
 		switch varName {
@@ -239,25 +240,24 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	colWidth := availableWidth / float64(len(props.Headers))
 
 	// Render headers
+	align := "C"
+	cellHeight := 5.0
+
 	if props.HeaderStyle != nil {
 		r.applyTableCellStyle(props.HeaderStyle)
+		switch props.HeaderStyle.Align {
+		case "left":
+			align = "L"
+		case "right":
+			align = "R"
+		}
+		if props.HeaderStyle.CellHeight > 0 {
+			cellHeight = props.HeaderStyle.CellHeight
+		}
 	} else {
 		r.textColor("")
 		r.backgroundColor("")
 		r.pdf.SetFont(r.defaultFont, "B", 10)
-	}
-
-	align := "C"
-	switch props.HeaderStyle.Align {
-	case "left":
-		align = "L"
-	case "right":
-		align = "R"
-	}
-
-	cellHeight := 5.0
-	if props.HeaderStyle.CellHeight > 0 {
-		cellHeight = props.HeaderStyle.CellHeight
 	}
 
 	for _, header := range props.Headers {
