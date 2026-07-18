@@ -1,3 +1,6 @@
+// Package config provides 12-factor configuration via Viper.
+// Settings are loaded from YAML files, .env files, and GOPDF_ prefixed
+// environment variables, with sensible defaults for all values.
 package config
 
 import (
@@ -6,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config holds all configuration for the PDF generation engine.
 type Config struct {
 	AssetDir           string `mapstructure:"asset_dir"`
 	ControlFlowPath    string `mapstructure:"control_flow_path"`
@@ -15,6 +19,8 @@ type Config struct {
 	DefaultFont        string `mapstructure:"default_font"`
 }
 
+// LoadConfig reads configuration from YAML, .env, and GOPDF_ environment
+// variables. Returns a Config with sensible defaults when no files are present.
 func LoadConfig() (*Config, error) {
 	viper.SetDefault("asset_dir", "assets/")
 	viper.SetDefault("control_flow_path", "flows/flow.json")
