@@ -19,7 +19,7 @@ func TestSubstituteVariables(t *testing.T) {
 		},
 	}}
 
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	tests := []struct {
 		name string
@@ -49,7 +49,7 @@ func TestRenderTextBlock(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{
 		"name": "Sergio",
 	}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type: "text",
@@ -66,7 +66,7 @@ func TestRenderTextBlock(t *testing.T) {
 
 func TestRenderTextBlockMissingProperties(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{Type: "text"}
 	if err := r.RenderBlock(block); err == nil {
@@ -76,7 +76,7 @@ func TestRenderTextBlockMissingProperties(t *testing.T) {
 
 func TestRenderPageBreak(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type:                "pagebreak",
@@ -99,7 +99,7 @@ func TestRenderLoop(t *testing.T) {
 			map[string]any{"label": "Third"},
 		},
 	}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type: "loop",
@@ -124,7 +124,7 @@ func TestRenderLoop(t *testing.T) {
 
 func TestRenderLoopMissingDataSource(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type: "loop",
@@ -140,7 +140,7 @@ func TestRenderLoopMissingDataSource(t *testing.T) {
 
 func TestRenderTable(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type: "table",
@@ -158,7 +158,7 @@ func TestRenderTable(t *testing.T) {
 func TestRenderTableWithNilHeaderStyle(t *testing.T) {
 	// This test validates the nil-pointer fix from Phase 1
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type: "table",
@@ -176,7 +176,7 @@ func TestRenderTableWithNilHeaderStyle(t *testing.T) {
 
 func TestRenderTableWithStyle(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type: "table",
@@ -202,7 +202,7 @@ func TestRenderTableWithStyle(t *testing.T) {
 
 func TestRenderUnknownBlockType(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{Type: "unknown"}
 	if err := r.RenderBlock(block); err == nil {
@@ -212,11 +212,27 @@ func TestRenderUnknownBlockType(t *testing.T) {
 
 func TestRenderLoopMissingProperties(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{Type: "loop"}
 	if err := r.RenderBlock(block); err == nil {
 		t.Error("expected error for loop without LoopProperties")
+	}
+}
+
+func TestRenderLine(t *testing.T) {
+	rc := &models.RuntimeContext{Data: map[string]any{}}
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
+
+	block := &models.Block{
+		Type: "line",
+		LineProperties: &models.LineProperties{
+			Color: "#333333",
+			Width: 0.5,
+		},
+	}
+	if err := r.RenderBlock(block); err != nil {
+		t.Fatalf("RenderBlock(line) failed: %v", err)
 	}
 }
 
@@ -258,7 +274,7 @@ func TestGoldenFiles(t *testing.T) {
 
 	for _, g := range goldens {
 		t.Run(g.name, func(t *testing.T) {
-			r := NewRenderer(rc, "", "Arial")
+			r := NewRenderer(rc, "", "Arial", "", "", nil)
 			if err := r.RenderBlock(g.block); err != nil {
 				t.Fatalf("RenderBlock failed: %v", err)
 			}
@@ -282,7 +298,7 @@ func TestGoldenFiles(t *testing.T) {
 
 func TestWriteToBytes(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
-	r := NewRenderer(rc, "", "Arial")
+	r := NewRenderer(rc, "", "Arial", "", "", nil)
 
 	block := &models.Block{
 		Type:           "text",

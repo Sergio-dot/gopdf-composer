@@ -83,7 +83,10 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 		fontDir = filepath.Join(e.config.AssetDir, "fonts")
 	}
 
-	r := renderer.NewRenderer(runtimeCtx, fontDir, e.config.DefaultFont)
+	r := renderer.NewRenderer(runtimeCtx, fontDir, e.config.DefaultFont,
+		cf.Document.Orientation, cf.Document.PageSize,
+		toMargins(&cf.Document),
+	)
 	pdf := r.GetPDF()
 
 	headerBlocks, err := e.loadAssetBlocks(cf.Document.HeaderAssets)
@@ -143,4 +146,16 @@ func (e *Engine) loadAssetBlocks(refs []models.AssetReference) ([]models.Block, 
 		allBlocks = append(allBlocks, asset.Blocks...)
 	}
 	return allBlocks, nil
+}
+
+func toMargins(doc *models.Document) *renderer.Margins {
+	if doc.MarginLeft == 0 && doc.MarginTop == 0 && doc.MarginRight == 0 && doc.MarginBottom == 0 {
+		return nil
+	}
+	return &renderer.Margins{
+		Left:   doc.MarginLeft,
+		Top:    doc.MarginTop,
+		Right:  doc.MarginRight,
+		Bottom: doc.MarginBottom,
+	}
 }

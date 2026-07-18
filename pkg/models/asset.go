@@ -14,6 +14,7 @@ type Block struct {
 	TableProperties     *TableProperties     `json:"tableProperties,omitempty"`
 	PageBreakProperties *PageBreakProperties `json:"pageBreakProperties,omitempty"`
 	LoopProperties      *LoopProperties      `json:"loopProperties,omitempty"`
+	LineProperties      *LineProperties      `json:"lineProperties,omitempty"`
 
 	// Container specific
 	Direction string  `json:"direction,omitempty"` // row or column
@@ -32,6 +33,12 @@ type PageBreakProperties struct{}
 type LoopProperties struct {
 	DataSource string `json:"dataSource"`
 	ItemVar    string `json:"itemVar,omitempty"`
+}
+
+type LineProperties struct {
+	Color  string  `json:"color,omitempty"`
+	Width  float64 `json:"width,omitempty"`
+	Margin float64 `json:"margin,omitempty"`
 }
 
 type TextProperties struct {

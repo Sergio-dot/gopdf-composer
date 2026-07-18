@@ -23,11 +23,24 @@ type Margins struct {
 	Bottom float64
 }
 
-func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir, defaultFont string) *Renderer {
-	pdf := gofpdf.New("P", "mm", "A4", fontDir)
-
+func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir, defaultFont, orientation, pageSize string, margins *Margins) *Renderer {
+	if orientation == "" {
+		orientation = "P"
+	}
+	if pageSize == "" {
+		pageSize = "A4"
+	}
 	if defaultFont == "" {
 		defaultFont = "Arial"
+	}
+
+	pdf := gofpdf.New(orientation, "mm", pageSize, fontDir)
+
+	if margins != nil {
+		pdf.SetMargins(margins.Left, margins.Top, margins.Right)
+		if margins.Bottom != 0 {
+			pdf.SetAutoPageBreak(true, margins.Bottom)
+		}
 	}
 
 	pdf.SetFont(defaultFont, "", 12)
@@ -51,6 +64,8 @@ func (r *Renderer) RenderBlock(block *models.Block) error {
 		return r.renderPageBreak(block)
 	case "loop":
 		return r.renderLoop(block)
+	case "line":
+		return r.renderLine(block)
 	default:
 		return fmt.Errorf("unknown block type: %s", block.Type)
 	}
@@ -495,6 +510,39 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 
 func (r *Renderer) renderPageBreak(_ *models.Block) error {
 	r.pdf.AddPage()
+	return nil
+}
+
+func (r *Renderer) renderLine(block *models.Block) error {
+	props := block.LineProperties
+	if props == nil {
+		return fmt.Errorf("line block missing lineProperties")
+	}
+
+	if props.Margin > 0 {
+		r.pdf.Ln(props.Margin)
+	}
+
+	pageWidth, _ := r.pdf.GetPageSize()
+	marginLeft, _, marginRight, _ := r.pdf.GetMargins()
+	availableWidth := pageWidth - marginLeft - marginRight
+
+	lineWidth := props.Width
+	if lineWidth <= 0 {
+		lineWidth = 0.4
+	}
+
+	y := r.pdf.GetY()
+
+	r.drawColor(props.Color)
+	r.pdf.SetLineWidth(lineWidth)
+	r.pdf.Line(marginLeft, y, marginLeft+availableWidth, y)
+	r.drawColor("")
+
+	if props.Margin > 0 {
+		r.pdf.Ln(props.Margin)
+	}
+
 	return nil
 }
 
