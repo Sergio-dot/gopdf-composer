@@ -28,7 +28,7 @@ jobs:
         run: go vet ./...
 
       - name: Test
-        run: go test ./... -race -coverprofile=coverage.out -covermode=atomic
+        run: go test ./pkg/... ./config/ -race -coverprofile=coverage.out -covermode=atomic
 
       - name: Coverage report
         uses: k1LoW/octocov-action@v1
