@@ -274,16 +274,40 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		r.pdf.SetFont(r.defaultFont, "", 9)
 	}
 
-	if props.RowStyle.CellHeight > 0 {
+	if props.RowStyle != nil && props.RowStyle.CellHeight > 0 {
 		cellHeight = props.RowStyle.CellHeight
 	}
 
-	for _, row := range props.Rows {
-		for _, cell := range row {
-			cell = r.substituteVariables(cell)
-			r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+	if props.RowsDataSource != "" {
+		data, exists := r.context.Get(props.RowsDataSource)
+		if !exists {
+			return fmt.Errorf("table rowsDataSource not found in context: %s", props.RowsDataSource)
 		}
-		r.pdf.Ln(-1)
+		items, ok := data.([]any)
+		if !ok {
+			return fmt.Errorf("table rowsDataSource is not an array: %s", props.RowsDataSource)
+		}
+		if len(props.Rows) == 0 {
+			return fmt.Errorf("table with rowsDataSource must have at least one template row")
+		}
+		templateRow := props.Rows[0]
+		for _, item := range items {
+			r.context.Set("item", item)
+			for _, cell := range templateRow {
+				cell = r.substituteVariables(cell)
+				r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+			}
+			r.pdf.Ln(-1)
+			r.context.Delete("item")
+		}
+	} else {
+		for _, row := range props.Rows {
+			for _, cell := range row {
+				cell = r.substituteVariables(cell)
+				r.pdf.CellFormat(colWidth, cellHeight, cell, "", 0, "L", false, 0, "")
+			}
+			r.pdf.Ln(-1)
+		}
 	}
 
 	return nil

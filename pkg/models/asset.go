@@ -59,10 +59,11 @@ type ImageProperties struct {
 }
 
 type TableProperties struct {
-	Headers     []string   `json:"headers"`
-	Rows        [][]string `json:"rows"`
-	HeaderStyle *CellStyle `json:"headerStyle,omitempty"`
-	RowStyle    *CellStyle `json:"rowStyle,omitempty"`
+	Headers        []string   `json:"headers"`
+	Rows           [][]string `json:"rows,omitempty"`
+	RowsDataSource string     `json:"rowsDataSource,omitempty"`
+	HeaderStyle    *CellStyle `json:"headerStyle,omitempty"`
+	RowStyle       *CellStyle `json:"rowStyle,omitempty"`
 }
 
 type CellStyle struct {
