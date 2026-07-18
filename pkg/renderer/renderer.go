@@ -121,3 +121,8 @@ func (r *Renderer) GetPDF() *gofpdf.Fpdf {
 func (r *Renderer) GetContext() *models.RuntimeContext {
 	return r.context
 }
+
+// SetDefaultFont updates the default font used for rendering.
+func (r *Renderer) SetDefaultFont(font string) {
+	r.defaultFont = font
+}

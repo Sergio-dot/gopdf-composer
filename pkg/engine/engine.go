@@ -104,6 +104,16 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 	)
 	pdf := r.GetPDF()
 
+	for name, path := range e.config.FontFiles {
+		pdf.AddUTF8Font(name, "", path)
+	}
+	if len(e.config.FontFiles) > 0 && e.config.DefaultFont == "" {
+		for name := range e.config.FontFiles {
+			r.SetDefaultFont(name)
+			break
+		}
+	}
+
 	headerBlocks, err := e.loadAssetBlocks(cf.Document.HeaderAssets)
 	if err != nil {
 		return nil, err
