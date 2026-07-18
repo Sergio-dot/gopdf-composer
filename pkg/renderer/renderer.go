@@ -87,7 +87,7 @@ func (r *Renderer) renderText(block *models.Block) error {
 	r.textColor(props.FontColor)
 
 	// substitute variables
-	text := r.substituteVariables(props.Text) // TODO: maybe is better to use text/template
+	text := r.substituteVariables(props.Text)
 
 	// alignment
 	align := "L"
@@ -544,7 +544,7 @@ func (r *Renderer) renderColumnContainer(block *models.Block) error {
 	return nil
 }
 
-func (r *Renderer) renderPageBreak(block *models.Block) error {
+func (r *Renderer) renderPageBreak(_ *models.Block) error {
 	r.pdf.AddPage()
 	return nil
 }

@@ -2,7 +2,6 @@ package renderer
 
 import (
 	"crypto/sha256"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,7 +29,7 @@ func TestSubstituteVariables(t *testing.T) {
 		{"simple variable", "Hello {{name}}", "Hello Sergio"},
 		{"int variable", "Count: {{count}}", "Count: 5"},
 		{"nested variable", "Email: {{user.email}}", "Email: sergio@example.com"},
-		{"page number", "Page {{page}}", fmt.Sprintf("Page 1")},
+		{"page number", "Page {{page}}", "Page 1"},
 		{"total pages", "Total {{totalPages}}", "Total {nb}"},
 		{"no variable", "Plain text", "Plain text"},
 		{"unknown variable", "{{missing}}", "{{missing}}"},
