@@ -32,6 +32,7 @@ func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir, defaultFont string)
 
 	pdf.SetFont(defaultFont, "", 12)
 	pdf.AddPage()
+	pdf.AliasNbPages("{nb}")
 
 	return &Renderer{pdf: pdf, context: runtimeCtx, defaultFont: defaultFont}
 }
@@ -138,6 +139,13 @@ func (r *Renderer) substituteVariables(text string) string {
 
 	return re.ReplaceAllStringFunc(text, func(match string) string {
 		varName := strings.Trim(match, "{}")
+
+		switch varName {
+		case "page":
+			return fmt.Sprintf("%d", r.pdf.PageNo())
+		case "totalPages":
+			return "{nb}"
+		}
 
 		val, exists := r.context.GetNested(varName)
 		if exists {
