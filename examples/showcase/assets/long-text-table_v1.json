@@ -1,0 +1,36 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "CCP Analysis — Piano HACCP (Sezione 11)",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "marginBottom": 4
+      }
+    },
+    {
+      "type": "table",
+      "tableProperties": {
+        "headers": ["Fase", "Pericolo", "Limiti Critici", "Monitoraggio", "Misure Preventive", "Azioni Correttive", "Verifica"],
+        "columnWidths": [8, 8, 10, 10, 22, 28, 14],
+        "rowsDataSource": "ccpRecords",
+        "rows": [
+          ["{{item.phase}}", "{{item.pericolo}}", "{{item.limiti}}", "{{item.monitoraggio}}", "{{item.misure}}", "{{item.azioni}}", "{{item.verifica}}"]
+        ],
+        "headerStyle": {
+          "fontSize": 8,
+          "fontWeight": "bold",
+          "fontColor": "#ffffff",
+          "backgroundColor": "#2c3e50",
+          "align": "left",
+          "cellHeight": 6
+        },
+        "rowStyle": {
+          "fontSize": 7,
+          "cellHeight": 4.5
+        }
+      }
+    }
+  ]
+}

@@ -24,5 +24,34 @@
     {"label": "Compound Conditions", "status": "done"},
     {"label": "Batch Processing", "status": "pending"}
   ],
-  "footerNote": "Powered by gopdf-composer"
+  "footerNote": "Powered by gopdf-composer",
+  "ccpRecords": [
+    {
+      "phase": "Stoccaggio MP",
+      "pericolo": "Crescita microbica per errata temperatura",
+      "limiti": "T <= 4°C per carne fresca",
+      "monitoraggio": "Registrazione continua con sonda PT100 certificata",
+      "misure": "Controllo visivo giornaliero del display + verifica taratura mensile della sonda",
+      "azioni": "Blocco immediato del lotto. Se T > 7°C scarto del prodotto. Manutenzione straordinaria cella frigorifera e verifica integrità guarnizioni",
+      "verifica": "Audit trimestrale HACCP + analisi microbiologiche di superficie ogni 6 mesi"
+    },
+    {
+      "phase": "Cottura prodotto",
+      "pericolo": "Sopravvivenza patogeni (Salmonella, Listeria)",
+      "limiti": "T cuore prodotto >= 75°C per almeno 2 minuti",
+      "monitoraggio": "Sonda termometrica a penetrazione con registrazione su scheda di cottura",
+      "misure": "Misurazione a fine ciclo su ogni lotto. Taratura annuale delle sonde con certificato ACCREDIA",
+      "azioni": "Prolungamento cottura fino a raggiungimento T target. Se lotto non conforme, riprocessamento o scarto. Verifica e calibrazione forno",
+      "verifica": "Controllo registrazioni da parte del responsabile qualità ogni settimana"
+    },
+    {
+      "phase": "Confezionamento",
+      "pericolo": "Contaminazione da corpi estranei metallici",
+      "limiti": "Assenza frammenti metallici > 2 mm (ferrosi) e > 3 mm (non ferrosi)",
+      "monitoraggio": "Metal detector con test di calibrazione a inizio/fine turno con sfere campione",
+      "misure": "Registrazione su modulo controllo qualità. Test di sensibilità con campioni Fe, Non-Fe e AISI 316 ogni ora",
+      "azioni": "Blocco linea e ispezione visiva completa del lotto interessato. Se guasto metal detector, fermo produzione e richiesta intervento tecnico",
+      "verifica": "Verifica registrazioni metal detector ogni fine turno da parte del supervisore"
+    }
+  ]
 }
