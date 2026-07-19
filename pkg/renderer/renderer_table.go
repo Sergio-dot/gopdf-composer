@@ -133,6 +133,22 @@ func (r *Renderer) applyTableCellStyle(style *models.CellStyle) {
 func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []string, align string) {
 	marginLeft, _, _, _ := r.pdf.GetMargins()
 
+	maxLines := 0
+	for i, text := range cells {
+		lines := r.pdf.SplitLines([]byte(text), colWidths[i])
+		if len(lines) > maxLines {
+			maxLines = len(lines)
+		}
+	}
+	if maxLines == 0 {
+		maxLines = 1
+	}
+
+	neededHt := float64(maxLines) * lineHt
+	if !r.fitsOnPage(neededHt) {
+		r.pdf.AddPage()
+	}
+
 	var colX float64 = marginLeft
 	colStartX := make([]float64, len(colWidths))
 	for i, w := range colWidths {
@@ -153,4 +169,14 @@ func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []s
 	}
 
 	r.pdf.SetY(maxY)
+}
+
+func (r *Renderer) fitsOnPage(neededHt float64) bool {
+	_, pageHt := r.pdf.GetPageSize()
+	_, _, _, bottomMargin := r.pdf.GetMargins()
+	auto, autoMargin := r.pdf.GetAutoPageBreak()
+	if auto {
+		bottomMargin = autoMargin
+	}
+	return r.pdf.GetY()+neededHt <= pageHt-bottomMargin
 }
