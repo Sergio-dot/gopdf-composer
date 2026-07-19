@@ -91,20 +91,20 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		templateRow := props.Rows[0]
 		for _, item := range items {
 			r.context.Set("item", item)
+			cells := make([]string, len(templateRow))
 			for i, cell := range templateRow {
-				cell = r.substituteVariables(cell)
-				r.pdf.CellFormat(colWidths[i], cellHeight, cell, "", 0, "L", false, 0, "")
+				cells[i] = r.substituteVariables(cell)
 			}
-			r.pdf.Ln(-1)
+			r.renderRowCells(colWidths, cellHeight, cells, "L")
 			r.context.Delete("item")
 		}
 	} else {
 		for _, row := range props.Rows {
+			cells := make([]string, len(row))
 			for i, cell := range row {
-				cell = r.substituteVariables(cell)
-				r.pdf.CellFormat(colWidths[i], cellHeight, cell, "", 0, "L", false, 0, "")
+				cells[i] = r.substituteVariables(cell)
 			}
-			r.pdf.Ln(-1)
+			r.renderRowCells(colWidths, cellHeight, cells, "L")
 		}
 	}
 
@@ -128,4 +128,29 @@ func (r *Renderer) applyTableCellStyle(style *models.CellStyle) {
 
 		r.pdf.SetFont(fontFamily, fontStyle, style.FontSize)
 	}
+}
+
+func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []string, align string) {
+	marginLeft, _, _, _ := r.pdf.GetMargins()
+
+	var colX float64 = marginLeft
+	colStartX := make([]float64, len(colWidths))
+	for i, w := range colWidths {
+		colStartX[i] = colX
+		colX += w
+	}
+
+	startY := r.pdf.GetY()
+	maxY := startY
+
+	for i, text := range cells {
+		r.pdf.SetY(startY)
+		r.pdf.SetX(colStartX[i])
+		r.pdf.MultiCell(colWidths[i], lineHt, text, "", align, false)
+		if cy := r.pdf.GetY(); cy > maxY {
+			maxY = cy
+		}
+	}
+
+	r.pdf.SetY(maxY)
 }
