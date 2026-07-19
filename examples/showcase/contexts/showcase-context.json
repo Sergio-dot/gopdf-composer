@@ -25,33 +25,33 @@
     {"label": "Batch Processing", "status": "pending"}
   ],
   "footerNote": "Powered by gopdf-composer",
-  "ccpRecords": [
+  "longRecords": [
     {
-      "phase": "Stoccaggio MP",
-      "pericolo": "Crescita microbica per errata temperatura",
-      "limiti": "T <= 4°C per carne fresca",
-      "monitoraggio": "Registrazione continua con sonda PT100 certificata",
-      "misure": "Controllo visivo giornaliero del display + verifica taratura mensile della sonda",
-      "azioni": "Blocco immediato del lotto. Se T > 7°C scarto del prodotto. Manutenzione straordinaria cella frigorifera e verifica integrità guarnizioni",
-      "verifica": "Audit trimestrale HACCP + analisi microbiologiche di superficie ogni 6 mesi"
+      "col1": "Lorem",
+      "col2": "Ipsum dolor sit amet consectetur adipiscing elit",
+      "col3": "Sed do eiusmod tempor incididunt ut labore",
+      "col4": "Dolore magna aliqua veniam quis nostrud",
+      "col5": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+      "col6": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat",
+      "col7": "Cupidatat non proident, sunt in culpa qui officia"
     },
     {
-      "phase": "Cottura prodotto",
-      "pericolo": "Sopravvivenza patogeni (Salmonella, Listeria)",
-      "limiti": "T cuore prodotto >= 75°C per almeno 2 minuti",
-      "monitoraggio": "Sonda termometrica a penetrazione con registrazione su scheda di cottura",
-      "misure": "Misurazione a fine ciclo su ogni lotto. Taratura annuale delle sonde con certificato ACCREDIA",
-      "azioni": "Prolungamento cottura fino a raggiungimento T target. Se lotto non conforme, riprocessamento o scarto. Verifica e calibrazione forno",
-      "verifica": "Controllo registrazioni da parte del responsabile qualità ogni settimana"
+      "col1": "Ipsum",
+      "col2": "Consectetur adipiscing elit sed do eiusmod",
+      "col3": "Tempor incididunt ut labore et dolore magna",
+      "col4": "Aliqua ut enim ad minim veniam quis nostrud",
+      "col5": "Exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit",
+      "col6": "Esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt",
+      "col7": "Mollit anim id est laborum sed perspiciatis"
     },
     {
-      "phase": "Confezionamento",
-      "pericolo": "Contaminazione da corpi estranei metallici",
-      "limiti": "Assenza frammenti metallici > 2 mm (ferrosi) e > 3 mm (non ferrosi)",
-      "monitoraggio": "Metal detector con test di calibrazione a inizio/fine turno con sfere campione",
-      "misure": "Registrazione su modulo controllo qualità. Test di sensibilità con campioni Fe, Non-Fe e AISI 316 ogni ora",
-      "azioni": "Blocco linea e ispezione visiva completa del lotto interessato. Se guasto metal detector, fermo produzione e richiesta intervento tecnico",
-      "verifica": "Verifica registrazioni metal detector ogni fine turno da parte del supervisore"
+      "col1": "Dolor",
+      "col2": "Sed do eiusmod tempor incididunt ut labore et",
+      "col3": "Dolore magna aliqua ut enim ad minim veniam",
+      "col4": "Quis nostrud exercitation ullamco laboris nisi",
+      "col5": "Ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat",
+      "col6": "Nulla pariatur excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      "col7": "Sed ut perspiciatis unde omnis iste natus error"
     }
   ]
 }

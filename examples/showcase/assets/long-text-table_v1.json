@@ -3,7 +3,7 @@
     {
       "type": "text",
       "textProperties": {
-        "text": "CCP Analysis — Piano HACCP (Sezione 11)",
+        "text": "Long Text Table — MultiCell Wrapping Demo",
         "fontSize": 14,
         "fontWeight": "bold",
         "marginBottom": 4
@@ -12,11 +12,11 @@
     {
       "type": "table",
       "tableProperties": {
-        "headers": ["Fase", "Pericolo", "Limiti Critici", "Monitoraggio", "Misure Preventive", "Azioni Correttive", "Verifica"],
+        "headers": ["Short", "Short B", "Medium", "Medium B", "Long Text Column", "Extra Long Text Column", "Medium C"],
         "columnWidths": [8, 8, 10, 10, 22, 28, 14],
-        "rowsDataSource": "ccpRecords",
+        "rowsDataSource": "longRecords",
         "rows": [
-          ["{{item.phase}}", "{{item.pericolo}}", "{{item.limiti}}", "{{item.monitoraggio}}", "{{item.misure}}", "{{item.azioni}}", "{{item.verifica}}"]
+          ["{{item.col1}}", "{{item.col2}}", "{{item.col3}}", "{{item.col4}}", "{{item.col5}}", "{{item.col6}}", "{{item.col7}}"]
         ],
         "headerStyle": {
           "fontSize": 8,
