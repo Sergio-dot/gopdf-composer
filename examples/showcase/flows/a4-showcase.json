@@ -37,6 +37,10 @@
           {
             "assetId": "features-loop",
             "version": "1"
+          },
+          {
+            "assetId": "long-text-table",
+            "version": "1"
           }
         ]
       }

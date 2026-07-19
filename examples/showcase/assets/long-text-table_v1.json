@@ -1,0 +1,36 @@
+{
+  "blocks": [
+    {
+      "type": "text",
+      "textProperties": {
+        "text": "Long Text Table — MultiCell Wrapping Demo",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "marginBottom": 4
+      }
+    },
+    {
+      "type": "table",
+      "tableProperties": {
+        "headers": ["Short", "Short B", "Medium", "Medium B", "Long Text Column", "Extra Long Text Column", "Medium C"],
+        "columnWidths": [8, 8, 10, 10, 22, 28, 14],
+        "rowsDataSource": "longRecords",
+        "rows": [
+          ["{{item.col1}}", "{{item.col2}}", "{{item.col3}}", "{{item.col4}}", "{{item.col5}}", "{{item.col6}}", "{{item.col7}}"]
+        ],
+        "headerStyle": {
+          "fontSize": 8,
+          "fontWeight": "bold",
+          "fontColor": "#ffffff",
+          "backgroundColor": "#2c3e50",
+          "align": "left",
+          "cellHeight": 6
+        },
+        "rowStyle": {
+          "fontSize": 7,
+          "cellHeight": 4.5
+        }
+      }
+    }
+  ]
+}

@@ -24,5 +24,34 @@
     {"label": "Compound Conditions", "status": "done"},
     {"label": "Batch Processing", "status": "pending"}
   ],
-  "footerNote": "Powered by gopdf-composer"
+  "footerNote": "Powered by gopdf-composer",
+  "longRecords": [
+    {
+      "col1": "Lorem",
+      "col2": "Ipsum dolor sit amet consectetur adipiscing elit",
+      "col3": "Sed do eiusmod tempor incididunt ut labore",
+      "col4": "Dolore magna aliqua veniam quis nostrud",
+      "col5": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+      "col6": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat",
+      "col7": "Cupidatat non proident, sunt in culpa qui officia"
+    },
+    {
+      "col1": "Ipsum",
+      "col2": "Consectetur adipiscing elit sed do eiusmod",
+      "col3": "Tempor incididunt ut labore et dolore magna",
+      "col4": "Aliqua ut enim ad minim veniam quis nostrud",
+      "col5": "Exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit",
+      "col6": "Esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt",
+      "col7": "Mollit anim id est laborum sed perspiciatis"
+    },
+    {
+      "col1": "Dolor",
+      "col2": "Sed do eiusmod tempor incididunt ut labore et",
+      "col3": "Dolore magna aliqua ut enim ad minim veniam",
+      "col4": "Quis nostrud exercitation ullamco laboris nisi",
+      "col5": "Ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat",
+      "col6": "Nulla pariatur excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      "col7": "Sed ut perspiciatis unde omnis iste natus error"
+    }
+  ]
 }
