@@ -106,6 +106,9 @@ func (e *Engine) render(cf *models.ControlFlow, runtimeCtx *models.RuntimeContex
 
 	for name, path := range e.config.FontFiles {
 		pdf.AddUTF8Font(name, "", path)
+		pdf.AddUTF8Font(name, "B", path)
+		pdf.AddUTF8Font(name, "I", path)
+		pdf.AddUTF8Font(name, "BI", path)
 	}
 	if len(e.config.FontFiles) > 0 && e.config.DefaultFont == "" {
 		for name := range e.config.FontFiles {
