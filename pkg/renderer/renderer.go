@@ -47,7 +47,6 @@ func NewRenderer(runtimeCtx *models.RuntimeContext, fontDir, defaultFont, orient
 		}
 	}
 
-	pdf.SetFont(defaultFont, "", 12)
 	pdf.AddPage()
 	pdf.AliasNbPages("{nb}")
 
