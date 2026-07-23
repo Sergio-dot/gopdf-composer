@@ -135,7 +135,15 @@ func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []s
 
 	maxLines := 0
 	for i, text := range cells {
-		lines := r.pdf.SplitLines([]byte(text), colWidths[i])
+		var lines [][]byte
+		func() {
+			defer func() {
+				if recover() != nil {
+					lines = [][]byte{[]byte(text)}
+				}
+			}()
+			lines = r.pdf.SplitLines([]byte(text), colWidths[i])
+		}()
 		if len(lines) > maxLines {
 			maxLines = len(lines)
 		}
