@@ -7,7 +7,7 @@
   "userCountry": "ES",
   "score": 85,
   "team": [
-    {"name": "Sergio", "role": "Lead", "active": true},
+    {"name": "Alice", "role": "Lead", "active": true},
     {"name": "Maria", "role": "Developer", "active": true},
     {"name": "Carlos", "role": "Designer", "active": false},
     {"name": "Ana", "role": "QA", "active": true}
