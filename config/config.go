@@ -11,13 +11,13 @@ import (
 
 // Config holds all configuration for the PDF generation engine.
 type Config struct {
-	AssetDir           string            `mapstructure:"asset_dir"`
-	ControlFlowPath    string            `mapstructure:"control_flow_path"`
-	RuntimeContextPath string            `mapstructure:"runtime_context_path"`
-	OutputPath         string            `mapstructure:"output_path"`
-	FontDir            string            `mapstructure:"font_dir"`
-	DefaultFont        string            `mapstructure:"default_font"`
-	FontFiles          map[string]string `mapstructure:"font_files"`
+	AssetDir           string                       `mapstructure:"asset_dir"`
+	ControlFlowPath    string                       `mapstructure:"control_flow_path"`
+	RuntimeContextPath string                       `mapstructure:"runtime_context_path"`
+	OutputPath         string                       `mapstructure:"output_path"`
+	FontDir            string                       `mapstructure:"font_dir"`
+	DefaultFont        string                       `mapstructure:"default_font"`
+	FontFiles          map[string]map[string]string `mapstructure:"font_files"`
 }
 
 // LoadConfig reads configuration from YAML, .env, and GOPDF_ environment
