@@ -50,18 +50,31 @@ type LineProperties struct {
 	Margin float64 `json:"margin,omitempty"`
 }
 
+// TextSpan represents an inline text fragment with its own styling.
+// When Spans is provided on a text block, each span is rendered
+// consecutively on the same line using Write, enabling mixed styles
+// (e.g. bold + italic + regular) within a single text block.
+type TextSpan struct {
+	Text       string  `json:"text"`
+	FontWeight string  `json:"fontWeight,omitempty"`
+	FontColor  string  `json:"fontColor,omitempty"`
+	FontSize   float64 `json:"fontSize,omitempty"`
+	FontFamily string  `json:"fontFamily,omitempty"`
+}
+
 // TextProperties configures a text block with font styling, alignment, and margins.
 type TextProperties struct {
-	Text            string  `json:"text"`
-	FontFamily      string  `json:"fontFamily,omitempty"`
-	FontSize        float64 `json:"fontSize"`
-	FontWeight      string  `json:"fontWeight,omitempty"`
-	FontColor       string  `json:"fontColor,omitempty"`
-	BackgroundColor string  `json:"backgroundColor,omitempty"`
-	LineHeight      float64 `json:"lineHeight,omitempty"`
-	Align           string  `json:"align,omitempty"`
-	MarginTop       float64 `json:"marginTop,omitempty"`
-	MarginBottom    float64 `json:"marginBottom,omitempty"`
+	Text            string     `json:"text"`
+	FontFamily      string     `json:"fontFamily,omitempty"`
+	FontSize        float64    `json:"fontSize"`
+	FontWeight      string     `json:"fontWeight,omitempty"`
+	FontColor       string     `json:"fontColor,omitempty"`
+	BackgroundColor string     `json:"backgroundColor,omitempty"`
+	LineHeight      float64    `json:"lineHeight,omitempty"`
+	Align           string     `json:"align,omitempty"`
+	MarginTop       float64    `json:"marginTop,omitempty"`
+	MarginBottom    float64    `json:"marginBottom,omitempty"`
+	Spans           []TextSpan `json:"spans,omitempty"`
 }
 
 // ImageProperties configures an image block with path, dimensions, alignment,
