@@ -117,7 +117,7 @@ func TestRenderSignatureBlock(t *testing.T) {
 	}
 }
 
-func TestRenderSignatureBelowLayout(t *testing.T) {
+func TestRenderSignatureStackedLayout(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
 	r := NewRenderer(rc, "", "Helvetica", "", "", nil)
 
@@ -125,7 +125,7 @@ func TestRenderSignatureBelowLayout(t *testing.T) {
 		Type: "signature",
 		SignatureProperties: &models.SignatureProperties{
 			Label:      "Firma del responsabile",
-			Layout:     "below",
+			Layout:     "stacked",
 			FontSize:   11,
 			FontWeight: "bold",
 			Align:      "left",
