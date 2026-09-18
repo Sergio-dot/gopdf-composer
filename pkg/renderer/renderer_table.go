@@ -13,13 +13,29 @@ func (r *Renderer) renderTable(block *models.Block) error {
 
 	props := block.TableProperties
 
+	headers := props.Headers
+	if props.HeadersDataSource != "" {
+		data, ok := r.resolveContext(props.HeadersDataSource)
+		if !ok {
+			return fmt.Errorf("table headersDataSource not found in context: %s", props.HeadersDataSource)
+		}
+		hs, ok := data.([]any)
+		if !ok {
+			return fmt.Errorf("table headersDataSource is not an array: %s", props.HeadersDataSource)
+		}
+		headers = make([]string, len(hs))
+		for i, h := range hs {
+			headers[i] = fmt.Sprintf("%v", h)
+		}
+	}
+
 	pageWidth, _ := r.pdf.GetPageSize()
 	var margins Margins
 	margins.Left, _, margins.Right, _ = r.pdf.GetMargins()
 	availableWidth := pageWidth - margins.Left - margins.Right
 
-	colWidths := make([]float64, len(props.Headers))
-	if len(props.ColumnWidths) == len(props.Headers) {
+	colWidths := make([]float64, len(headers))
+	if len(props.ColumnWidths) == len(headers) {
 		var total float64
 		for _, w := range props.ColumnWidths {
 			total += w
@@ -30,13 +46,18 @@ func (r *Renderer) renderTable(block *models.Block) error {
 			}
 		} else {
 			for i := range colWidths {
-				colWidths[i] = availableWidth / float64(len(props.Headers))
+				colWidths[i] = availableWidth / float64(len(headers))
 			}
 		}
 	} else {
 		for i := range colWidths {
-			colWidths[i] = availableWidth / float64(len(props.Headers))
+			colWidths[i] = availableWidth / float64(len(headers))
 		}
+	}
+
+	border := ""
+	if props.Border {
+		border = "1"
 	}
 
 	align := "C"
@@ -59,8 +80,8 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		r.pdf.SetFont(r.defaultFont, "B", 10)
 	}
 
-	for i, header := range props.Headers {
-		r.pdf.CellFormat(colWidths[i], cellHeight, header, "", 0, align, true, 0, "")
+	for i, header := range headers {
+		r.pdf.CellFormat(colWidths[i], cellHeight, header, border, 0, align, true, 0, "")
 	}
 	r.pdf.Ln(-1)
 
@@ -77,26 +98,37 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	}
 
 	if props.RowsDataSource != "" {
-		data, exists := r.context.Get(props.RowsDataSource)
-		if !exists {
+		data, ok := r.resolveContext(props.RowsDataSource)
+		if !ok {
 			return fmt.Errorf("table rowsDataSource not found in context: %s", props.RowsDataSource)
 		}
 		items, ok := data.([]any)
 		if !ok {
 			return fmt.Errorf("table rowsDataSource is not an array: %s", props.RowsDataSource)
 		}
-		if len(props.Rows) == 0 {
-			return fmt.Errorf("table with rowsDataSource must have at least one template row")
-		}
-		templateRow := props.Rows[0]
-		for _, item := range items {
-			r.context.Set("item", item)
-			cells := make([]string, len(templateRow))
-			for i, cell := range templateRow {
-				cells[i] = r.substituteVariables(cell)
+		if props.HeadersDataSource != "" {
+			cellsField := props.CellsField
+			if cellsField == "" {
+				cellsField = "cells"
 			}
-			r.renderRowCells(colWidths, cellHeight, cells, "L")
-			r.context.Delete("item")
+			for _, item := range items {
+				cells := rowCellsFromItem(item, cellsField)
+				r.renderRowCells(colWidths, cellHeight, cells, "L", props.Border, props.StrikeEmpty)
+			}
+		} else {
+			if len(props.Rows) == 0 {
+				return fmt.Errorf("table with rowsDataSource must have at least one template row")
+			}
+			templateRow := props.Rows[0]
+			for _, item := range items {
+				r.context.Set("item", item)
+				cells := make([]string, len(templateRow))
+				for i, cell := range templateRow {
+					cells[i] = r.substituteVariables(cell)
+				}
+				r.renderRowCells(colWidths, cellHeight, cells, "L", props.Border, props.StrikeEmpty)
+				r.context.Delete("item")
+			}
 		}
 	} else {
 		for _, row := range props.Rows {
@@ -104,11 +136,44 @@ func (r *Renderer) renderTable(block *models.Block) error {
 			for i, cell := range row {
 				cells[i] = r.substituteVariables(cell)
 			}
-			r.renderRowCells(colWidths, cellHeight, cells, "L")
+			r.renderRowCells(colWidths, cellHeight, cells, "L", props.Border, props.StrikeEmpty)
 		}
 	}
 
 	return nil
+}
+
+// resolveContext looks up a value by top-level key first, then by nested
+// dot path (so loop items such as "item.rows" are supported).
+func (r *Renderer) resolveContext(key string) (any, bool) {
+	if v, ok := r.context.Get(key); ok {
+		return v, true
+	}
+	if v, ok := r.context.GetNested(key); ok {
+		return v, true
+	}
+	return nil, false
+}
+
+// rowCellsFromItem extracts the "cells" array from a dynamic row item.
+func rowCellsFromItem(item any, cellsField string) []string {
+	m, ok := item.(map[string]any)
+	if !ok {
+		return nil
+	}
+	raw, ok := m[cellsField]
+	if !ok {
+		return nil
+	}
+	arr, ok := raw.([]any)
+	if !ok {
+		return nil
+	}
+	cells := make([]string, len(arr))
+	for i, v := range arr {
+		cells[i] = fmt.Sprintf("%v", v)
+	}
+	return cells
 }
 
 func (r *Renderer) applyTableCellStyle(style *models.CellStyle) {
@@ -130,7 +195,7 @@ func (r *Renderer) applyTableCellStyle(style *models.CellStyle) {
 	}
 }
 
-func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []string, align string) {
+func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []string, align string, border bool, strikeEmpty bool) {
 	marginLeft, _, _, _ := r.pdf.GetMargins()
 
 	maxLines := 0
@@ -167,10 +232,18 @@ func (r *Renderer) renderRowCells(colWidths []float64, lineHt float64, cells []s
 	startY := r.pdf.GetY()
 	maxY := startY
 
+	borderStr := ""
+	if border {
+		borderStr = "1"
+	}
+
 	for i, text := range cells {
 		r.pdf.SetY(startY)
 		r.pdf.SetX(colStartX[i])
-		r.pdf.MultiCell(colWidths[i], lineHt, text, "", align, false)
+		r.pdf.MultiCell(colWidths[i], lineHt, text, borderStr, align, false)
+		if strikeEmpty && text == "" {
+			r.pdf.Line(colStartX[i], startY, colStartX[i]+colWidths[i], startY+lineHt)
+		}
 		if cy := r.pdf.GetY(); cy > maxY {
 			maxY = cy
 		}

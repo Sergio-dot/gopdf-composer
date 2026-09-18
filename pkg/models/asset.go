@@ -20,6 +20,7 @@ type Block struct {
 	PageBreakProperties *PageBreakProperties `json:"pageBreakProperties,omitempty"`
 	LoopProperties      *LoopProperties      `json:"loopProperties,omitempty"`
 	LineProperties      *LineProperties      `json:"lineProperties,omitempty"`
+	SignatureProperties *SignatureProperties `json:"signatureProperties,omitempty"`
 
 	// Container specific
 	Direction string  `json:"direction,omitempty"` // row or column
@@ -48,6 +49,17 @@ type LineProperties struct {
 	Color  string  `json:"color,omitempty"`
 	Width  float64 `json:"width,omitempty"`
 	Margin float64 `json:"margin,omitempty"`
+}
+
+// SignatureProperties configures a signature block: an optional label above a
+// horizontal signing line.
+type SignatureProperties struct {
+	Label          string  `json:"label,omitempty"`
+	LineWidth      float64 `json:"lineWidth,omitempty"`
+	LineColor      string  `json:"lineColor,omitempty"`
+	SignatureWidth float64 `json:"signatureWidth,omitempty"`
+	MarginTop      float64 `json:"marginTop,omitempty"`
+	MarginBottom   float64 `json:"marginBottom,omitempty"`
 }
 
 // TextSpan represents an inline text fragment with its own styling.
@@ -99,6 +111,17 @@ type TableProperties struct {
 	HeaderStyle    *CellStyle `json:"headerStyle,omitempty"`
 	RowStyle       *CellStyle `json:"rowStyle,omitempty"`
 	ColumnWidths   []float64  `json:"columnWidths,omitempty"`
+
+	// HeadersDataSource loads the column headers from a context array (allows
+	// dynamic columns). When set, each row item must expose a "cells" array
+	// (configurable via CellsField) used directly as the row.
+	HeadersDataSource string `json:"headersDataSource,omitempty"`
+	CellsField        string `json:"cellsField,omitempty"`
+
+	// Border draws a border around header and row cells.
+	Border bool `json:"border,omitempty"`
+	// StrikeEmpty draws a diagonal line across empty cells (not applicable).
+	StrikeEmpty bool `json:"strikeEmpty,omitempty"`
 }
 
 // CellStyle defines the visual style for table header and row cells.
