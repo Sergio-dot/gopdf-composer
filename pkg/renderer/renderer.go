@@ -70,6 +70,8 @@ func (r *Renderer) RenderBlock(block *models.Block) error {
 		return r.renderLoop(block)
 	case "line":
 		return r.renderLine(block)
+	case "signature":
+		return r.renderSignature(block)
 	default:
 		return fmt.Errorf("unknown block type: %s", block.Type)
 	}
