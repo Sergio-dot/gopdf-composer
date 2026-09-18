@@ -60,6 +60,7 @@ type SignatureProperties struct {
 	LineWidth      float64 `json:"lineWidth,omitempty"`
 	LineColor      string  `json:"lineColor,omitempty"`
 	SignatureWidth float64 `json:"signatureWidth,omitempty"`
+	LabelLineGap   float64 `json:"labelLineGap,omitempty"` // stacked layout gap between label and line
 	MarginTop      float64 `json:"marginTop,omitempty"`
 	MarginBottom   float64 `json:"marginBottom,omitempty"`
 

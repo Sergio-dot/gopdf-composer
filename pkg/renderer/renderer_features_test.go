@@ -124,12 +124,12 @@ func TestRenderSignatureStackedLayout(t *testing.T) {
 	sig := models.Block{
 		Type: "signature",
 		SignatureProperties: &models.SignatureProperties{
-			Label:      "Firma del responsabile",
-			Layout:     "stacked",
-			FontSize:   11,
-			FontWeight: "bold",
-			Align:      "left",
-			LineWidth:  0.4,
+			Label:        "Firma del responsabile",
+			Layout:       "stacked",
+			FontSize:     11,
+			FontWeight:   "bold",
+			LineWidth:    0.4,
+			LabelLineGap: 12,
 		},
 	}
 
