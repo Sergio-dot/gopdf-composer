@@ -48,30 +48,34 @@ func (r *Renderer) renderSignature(block *models.Block) error {
 		lineWidth = 0.4
 	}
 
-	sigWidth := available
-	if props.SignatureWidth > 0 {
-		sigWidth = props.SignatureWidth
-	}
-
-	align := "L"
-	switch props.Align {
-	case "right":
-		align = "R"
-	case "center":
-		align = "C"
-	}
-
 	label := r.substituteVariables(props.Label)
+	labelWidth := r.pdf.GetStringWidth(label)
 
 	if props.Layout == "stacked" {
-		if label != "" {
-			r.pdf.CellFormat(0, 5, label, "", 0, align, false, 0, "")
-			r.pdf.Ln(7)
+		labelGap := props.LabelLineGap
+		if labelGap == 0 {
+			labelGap = 8
 		}
+
+		sigWidth := props.SignatureWidth
+		if sigWidth == 0 {
+			sigWidth = available * 0.6
+		}
+		if sigWidth > available {
+			sigWidth = available
+		}
+
 		y := r.pdf.GetY()
+		if label != "" {
+			r.pdf.CellFormat(0, 5, label, "", 0, "C", false, 0, "")
+			r.pdf.Ln(labelGap)
+		}
+		y = r.pdf.GetY()
+
+		lineStart := marginLeft + (available-sigWidth)/2
 		r.drawColor(props.LineColor)
 		r.pdf.SetLineWidth(lineWidth)
-		r.pdf.Line(marginLeft, y, marginLeft+sigWidth, y)
+		r.pdf.Line(lineStart, y, lineStart+sigWidth, y)
 		r.drawColor("")
 		r.pdf.SetY(y + 2)
 	} else {
@@ -81,8 +85,18 @@ func (r *Renderer) renderSignature(block *models.Block) error {
 		if label != "" {
 			r.pdf.SetX(x)
 			r.pdf.CellFormat(0, 5, label, "", 0, "L", false, 0, "")
-			x += r.pdf.GetStringWidth(label) + 2
+			x = marginLeft + labelWidth + 2
 		}
+
+		remaining := marginLeft + available - x
+		sigWidth := props.SignatureWidth
+		if sigWidth == 0 {
+			sigWidth = remaining
+		}
+		if sigWidth > remaining {
+			sigWidth = remaining
+		}
+
 		lineY := y + 4
 		r.drawColor(props.LineColor)
 		r.pdf.SetLineWidth(lineWidth)
