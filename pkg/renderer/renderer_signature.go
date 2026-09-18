@@ -63,7 +63,7 @@ func (r *Renderer) renderSignature(block *models.Block) error {
 
 	label := r.substituteVariables(props.Label)
 
-	if props.Layout == "below" {
+	if props.Layout == "stacked" {
 		if label != "" {
 			r.pdf.CellFormat(0, 5, label, "", 0, align, false, 0, "")
 			r.pdf.Ln(7)
@@ -83,7 +83,7 @@ func (r *Renderer) renderSignature(block *models.Block) error {
 			r.pdf.CellFormat(0, 5, label, "", 0, "L", false, 0, "")
 			x += r.pdf.GetStringWidth(label) + 2
 		}
-		lineY := y + 2.5
+		lineY := y + 4
 		r.drawColor(props.LineColor)
 		r.pdf.SetLineWidth(lineWidth)
 		r.pdf.Line(x, lineY, x+sigWidth, lineY)

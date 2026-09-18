@@ -53,10 +53,10 @@ type LineProperties struct {
 
 // SignatureProperties configures a signature block: a stylable label and a
 // horizontal signing line. Layout "inline" (default) places the label and the
-// line on the same baseline; "below" places the line under the label.
+// line on the same baseline; "stacked" places the line under the label.
 type SignatureProperties struct {
 	Label          string  `json:"label,omitempty"`
-	Layout         string  `json:"layout,omitempty"` // "inline" (default) or "below"
+	Layout         string  `json:"layout,omitempty"` // "inline" (default) or "stacked"
 	LineWidth      float64 `json:"lineWidth,omitempty"`
 	LineColor      string  `json:"lineColor,omitempty"`
 	SignatureWidth float64 `json:"signatureWidth,omitempty"`
