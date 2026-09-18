@@ -65,14 +65,26 @@ func (r *Renderer) renderSignature(block *models.Block) error {
 			sigWidth = available
 		}
 
+		lineStart := marginLeft
+		switch props.Align {
+		case "center":
+			lineStart = marginLeft + (available-sigWidth)/2
+		case "right":
+			lineStart = marginLeft + available - sigWidth
+		}
+
 		y := r.pdf.GetY()
 		if label != "" {
-			r.pdf.CellFormat(0, 5, label, "", 0, "C", false, 0, "")
+			labelX := lineStart + (sigWidth-labelWidth)/2
+			if labelX < marginLeft {
+				labelX = marginLeft
+			}
+			r.pdf.SetX(labelX)
+			r.pdf.CellFormat(labelWidth, 5, label, "", 0, "L", false, 0, "")
 			r.pdf.Ln(labelGap)
 		}
 		y = r.pdf.GetY()
 
-		lineStart := marginLeft + (available-sigWidth)/2
 		r.drawColor(props.LineColor)
 		r.pdf.SetLineWidth(lineWidth)
 		r.pdf.Line(lineStart, y, lineStart+sigWidth, y)
