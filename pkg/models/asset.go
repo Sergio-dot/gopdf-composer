@@ -51,15 +51,24 @@ type LineProperties struct {
 	Margin float64 `json:"margin,omitempty"`
 }
 
-// SignatureProperties configures a signature block: an optional label above a
-// horizontal signing line.
+// SignatureProperties configures a signature block: a stylable label and a
+// horizontal signing line. Layout "inline" (default) places the label and the
+// line on the same baseline; "below" places the line under the label.
 type SignatureProperties struct {
 	Label          string  `json:"label,omitempty"`
+	Layout         string  `json:"layout,omitempty"` // "inline" (default) or "below"
 	LineWidth      float64 `json:"lineWidth,omitempty"`
 	LineColor      string  `json:"lineColor,omitempty"`
 	SignatureWidth float64 `json:"signatureWidth,omitempty"`
 	MarginTop      float64 `json:"marginTop,omitempty"`
 	MarginBottom   float64 `json:"marginBottom,omitempty"`
+
+	// Label styling
+	FontFamily string  `json:"fontFamily,omitempty"`
+	FontSize   float64 `json:"fontSize,omitempty"`
+	FontWeight string  `json:"fontWeight,omitempty"` // "", "bold", "italic", "boldItalic"
+	FontColor  string  `json:"fontColor,omitempty"`
+	Align      string  `json:"align,omitempty"` // left/right/center (below layout)
 }
 
 // TextSpan represents an inline text fragment with its own styling.
