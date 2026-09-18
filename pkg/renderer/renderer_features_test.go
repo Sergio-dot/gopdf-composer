@@ -105,7 +105,36 @@ func TestRenderSignatureBlock(t *testing.T) {
 	}
 
 	if err := r.RenderBlock(&sig); err != nil {
-		t.Fatalf("render signature: %v", err)
+		t.Fatalf("render signature (inline): %v", err)
+	}
+
+	var buf bytes.Buffer
+	if err := r.pdf.Output(&buf); err != nil {
+		t.Fatalf("pdf output: %v", err)
+	}
+	if buf.Len() == 0 {
+		t.Error("expected non-empty pdf output")
+	}
+}
+
+func TestRenderSignatureBelowLayout(t *testing.T) {
+	rc := &models.RuntimeContext{Data: map[string]any{}}
+	r := NewRenderer(rc, "", "Helvetica", "", "", nil)
+
+	sig := models.Block{
+		Type: "signature",
+		SignatureProperties: &models.SignatureProperties{
+			Label:      "Firma del responsabile",
+			Layout:     "below",
+			FontSize:   11,
+			FontWeight: "bold",
+			Align:      "left",
+			LineWidth:  0.4,
+		},
+	}
+
+	if err := r.RenderBlock(&sig); err != nil {
+		t.Fatalf("render signature (below): %v", err)
 	}
 
 	var buf bytes.Buffer
