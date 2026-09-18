@@ -69,7 +69,7 @@ type SignatureProperties struct {
 	FontSize   float64 `json:"fontSize,omitempty"`
 	FontWeight string  `json:"fontWeight,omitempty"` // "", "bold", "italic", "boldItalic"
 	FontColor  string  `json:"fontColor,omitempty"`
-	Align      string  `json:"align,omitempty"` // left/right/center (below layout)
+	Align      string  `json:"align,omitempty"` // stacked layout: block position left/center/right
 }
 
 // TextSpan represents an inline text fragment with its own styling.
