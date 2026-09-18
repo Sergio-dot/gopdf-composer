@@ -97,6 +97,18 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		cellHeight = props.RowStyle.CellHeight
 	}
 
+	rowAlign := "L"
+	if props.RowStyle != nil {
+		switch props.RowStyle.Align {
+		case "left":
+			rowAlign = "L"
+		case "right":
+			rowAlign = "R"
+		case "center":
+			rowAlign = "C"
+		}
+	}
+
 	if props.RowsDataSource != "" {
 		data, ok := r.resolveContext(props.RowsDataSource)
 		if !ok {
@@ -113,7 +125,7 @@ func (r *Renderer) renderTable(block *models.Block) error {
 			}
 			for _, item := range items {
 				cells := rowCellsFromItem(item, cellsField)
-				r.renderRowCells(colWidths, cellHeight, cells, "L", props.Border, props.StrikeEmpty)
+				r.renderRowCells(colWidths, cellHeight, cells, rowAlign, props.Border, props.StrikeEmpty)
 			}
 		} else {
 			if len(props.Rows) == 0 {
@@ -126,7 +138,7 @@ func (r *Renderer) renderTable(block *models.Block) error {
 				for i, cell := range templateRow {
 					cells[i] = r.substituteVariables(cell)
 				}
-				r.renderRowCells(colWidths, cellHeight, cells, "L", props.Border, props.StrikeEmpty)
+				r.renderRowCells(colWidths, cellHeight, cells, rowAlign, props.Border, props.StrikeEmpty)
 				r.context.Delete("item")
 			}
 		}
@@ -136,7 +148,7 @@ func (r *Renderer) renderTable(block *models.Block) error {
 			for i, cell := range row {
 				cells[i] = r.substituteVariables(cell)
 			}
-			r.renderRowCells(colWidths, cellHeight, cells, "L", props.Border, props.StrikeEmpty)
+			r.renderRowCells(colWidths, cellHeight, cells, rowAlign, props.Border, props.StrikeEmpty)
 		}
 	}
 
