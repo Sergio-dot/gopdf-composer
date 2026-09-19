@@ -117,6 +117,40 @@ func TestRenderSignatureBlock(t *testing.T) {
 	}
 }
 
+func TestRenderMultilineHeaders(t *testing.T) {
+	rc := &models.RuntimeContext{Data: map[string]any{
+		"headers": []any{"DEPOSITO\n(settimanale)", "PIANI LAVORO\n(giornaliera)", "FIRMA"},
+		"rows": []any{
+			map[string]any{"cells": []any{"", "", ""}},
+		},
+	}}
+
+	r := NewRenderer(rc, "", "Helvetica", "", "", nil)
+
+	table := models.Block{
+		Type: "table",
+		TableProperties: &models.TableProperties{
+			HeadersDataSource: "headers",
+			RowsDataSource:    "rows",
+			Border:            true,
+			HeaderStyle:       &models.CellStyle{CellHeight: 5, FontSize: 6, Align: "center"},
+			RowStyle:          &models.CellStyle{CellHeight: 6, FontSize: 6},
+		},
+	}
+
+	if err := r.RenderBlock(&table); err != nil {
+		t.Fatalf("render multiline-header table: %v", err)
+	}
+
+	var buf bytes.Buffer
+	if err := r.pdf.Output(&buf); err != nil {
+		t.Fatalf("pdf output: %v", err)
+	}
+	if buf.Len() == 0 {
+		t.Error("expected non-empty pdf output")
+	}
+}
+
 func TestRenderSignatureStackedLayout(t *testing.T) {
 	rc := &models.RuntimeContext{Data: map[string]any{}}
 	r := NewRenderer(rc, "", "Helvetica", "", "", nil)
