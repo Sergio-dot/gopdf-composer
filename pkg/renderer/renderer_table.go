@@ -80,10 +80,24 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		r.pdf.SetFont(r.defaultFont, "B", 10)
 	}
 
+	headerStartY := r.pdf.GetY()
+	maxHeaderLines := 1
 	for i, header := range headers {
-		r.pdf.CellFormat(colWidths[i], cellHeight, header, border, 0, align, true, 0, "")
+		lines := len(r.pdf.SplitLines([]byte(header), colWidths[i]))
+		if lines > maxHeaderLines {
+			maxHeaderLines = lines
+		}
 	}
-	r.pdf.Ln(-1)
+	headerRowHeight := float64(maxHeaderLines) * cellHeight
+
+	x := margins.Left
+	for i, header := range headers {
+		r.pdf.SetY(headerStartY)
+		r.pdf.SetX(x)
+		r.pdf.MultiCell(colWidths[i], cellHeight, header, border, align, true)
+		x += colWidths[i]
+	}
+	r.pdf.SetY(headerStartY + headerRowHeight)
 
 	if props.RowStyle != nil {
 		r.applyTableCellStyle(props.RowStyle)
