@@ -55,11 +55,6 @@ func (r *Renderer) renderTable(block *models.Block) error {
 		}
 	}
 
-	border := ""
-	if props.Border {
-		border = "1"
-	}
-
 	align := "C"
 	cellHeight := 5.0
 
@@ -90,11 +85,21 @@ func (r *Renderer) renderTable(block *models.Block) error {
 	}
 	headerRowHeight := float64(maxHeaderLines) * cellHeight
 
+	rectStyle := "F"
+	if props.Border {
+		rectStyle = "FD"
+	}
+
 	x := margins.Left
+	for i := range headers {
+		r.pdf.Rect(x, headerStartY, colWidths[i], headerRowHeight, rectStyle)
+		x += colWidths[i]
+	}
+
+	x = margins.Left
 	for i, header := range headers {
-		r.pdf.SetY(headerStartY)
-		r.pdf.SetX(x)
-		r.pdf.MultiCell(colWidths[i], cellHeight, header, border, align, true)
+		r.pdf.SetXY(x, headerStartY)
+		r.pdf.MultiCell(colWidths[i], cellHeight, header, "", align, false)
 		x += colWidths[i]
 	}
 	r.pdf.SetY(headerStartY + headerRowHeight)
